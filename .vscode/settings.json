@@ -1,5 +1,5 @@
 {
-  "editor.codeActionsOnSave": { "source.organizeImports": "always", "source.addMissingImports": "always" },
+  "editor.codeActionsOnSave": { "source.organizeImports": "always", "source.addMissingImports": "always", "source.unusedImports": "always" },
   "editor.formatOnSave": true,
   "editor.insertSpaces": true,
   "files.eol": "\n",
@@ -12,9 +12,15 @@
   "[xml]": { "editor.defaultFormatter": "redhat.vscode-xml" },
   "[markdown]": { "editor.tabSize": 3 },
   "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m -Xlog:disable",
+  "prettier.requireConfig": false,
+  "prettier.useEditorConfig": true,
+  "prettier.embeddedLanguageFormatting": "auto",
+  "prettier.bracketSameLine": false,
+  "prettier.endOfLine": "lf",
   "prettier.jsxSingleQuote": false,
-  "prettier.singleQuote": false,
   "prettier.printWidth": 200,
+  "prettier.semi": true,
+  "prettier.singleQuote": false,
   "prettier.tabWidth": 2,
   "prettier.trailingComma": "all",
   "prettier.useTabs": false
