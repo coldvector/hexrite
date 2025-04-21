@@ -1,6 +1,6 @@
-package io.codevector.voidbeacon.service;
+package io.codevector.hexrite.service;
 
-import io.codevector.voidbeacon.models.SimpleResponse;
+import io.codevector.hexrite.models.SimpleResponse;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.WebApplicationException;
@@ -15,7 +15,7 @@ public class GreetingServiceImpl implements GreetingService {
 
   @Override
   public Uni<Response> greet() {
-    LOGGER.infof("greet");
+    LOGGER.debugf("Hello from Void ");
 
     Response res = Response.status(Status.OK).entity(SimpleResponse.create("Hello World!")).build();
 

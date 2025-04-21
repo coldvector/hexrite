@@ -1,4 +1,4 @@
-# Void Beacon
+# Hexrite
 
 Chat with your LLMs.
 

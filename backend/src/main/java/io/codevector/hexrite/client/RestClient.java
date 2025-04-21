@@ -1,4 +1,4 @@
-package io.codevector.voidbeacon.client;
+package io.codevector.hexrite.client;
 
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.core.Response;

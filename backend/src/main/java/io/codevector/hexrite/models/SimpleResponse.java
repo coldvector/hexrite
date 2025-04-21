@@ -1,4 +1,4 @@
-package io.codevector.voidbeacon.models;
+package io.codevector.hexrite.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

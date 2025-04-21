@@ -1,6 +1,6 @@
 package io.github.zbhavyai.boilerplatejava.client;
 
-import io.codevector.voidbeacon.models.SimpleResponse;
+import io.codevector.hexrite.models.SimpleResponse;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;

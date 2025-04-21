@@ -1,4 +1,4 @@
-package io.codevector.voidbeacon.utils;
+package io.codevector.hexrite.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

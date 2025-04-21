@@ -1,6 +1,6 @@
-package io.codevector.voidbeacon.rest;
+package io.codevector.hexrite.rest;
 
-import io.codevector.voidbeacon.service.GreetingService;
+import io.codevector.hexrite.service.GreetingService;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;

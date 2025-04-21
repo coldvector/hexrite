@@ -1,7 +1,7 @@
-package io.codevector.voidbeacon.client;
+package io.codevector.hexrite.client;
 
-import io.codevector.voidbeacon.models.SimpleResponse;
-import io.codevector.voidbeacon.utils.JSONMapper;
+import io.codevector.hexrite.models.SimpleResponse;
+import io.codevector.hexrite.utils.JSONMapper;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
