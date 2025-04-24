@@ -28,43 +28,43 @@ public class Connection extends PanacheEntityBase {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   @JsonProperty("id")
-  private String id;
+  public String id;
 
   @Column(nullable = false, unique = true)
   @JsonProperty("name")
-  private String name;
+  public String name;
 
   @Column(name = "description")
   @JsonProperty("description")
-  private String description;
+  public String description;
 
   @Column(name = "type")
   @Enumerated(EnumType.STRING)
   @JsonProperty("type")
-  private ConnectionType type;
+  public ConnectionType type;
 
   @Column(name = "base_url")
   @JsonProperty("baseUrl")
-  private String baseUrl;
+  public String baseUrl;
 
   @Column(name = "api_key")
   @JsonProperty("apiKey")
-  private String apiKey;
+  public String apiKey;
 
   @Column(name = "created_at", nullable = false, updatable = false)
   @JsonProperty("createAt")
-  private Instant createdAt;
+  public Instant createdAt;
 
   @Column(name = "updated_at")
   @JsonProperty("updatedAt")
-  private Instant updatedAt;
+  public Instant updatedAt;
 
   @Column(name = "enabled", nullable = false)
   @JsonProperty("isEnabled")
-  private boolean isEnabled;
+  public boolean isEnabled;
 
   @RequiredForJPA
-  Connection() {}
+  public Connection() {}
 
   public Connection(ConnectionCreateRequest request) {
     this.name = request.name();
