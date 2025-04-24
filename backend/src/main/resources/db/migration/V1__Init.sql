@@ -13,7 +13,7 @@ create table hexrite.connection (
             'CUSTOM'
         )
     ),
-    base_url bytea,
+    base_url varchar(255),
     api_key varchar(255),
     created_at timestamp(6) with time zone not null,
     updated_at timestamp(6) with time zone,

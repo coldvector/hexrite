@@ -4,15 +4,18 @@ import io.codevector.hexrite.persistence.Connection;
 import io.quarkus.hibernate.reactive.panache.PanacheRepository;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class ConnectionRepository implements PanacheRepository<Connection> {
 
-  public Uni<Connection> findByName(String name) {
-    return find("name", name).firstResult();
-  }
+  private static final Logger LOGGER = Logger.getLogger(ConnectionRepository.class.getSimpleName());
 
-  public Uni<Boolean> exists(String name) {
-    return count("name", name).onItem().transform(count -> count > 0);
+  public Uni<Boolean> delete(String connectionId) {
+    return delete("id", connectionId)
+        .onItem()
+        .invoke(l -> LOGGER.infof("Deleted connection: %d", l))
+        .onItem()
+        .transform(l -> l > 0);
   }
 }

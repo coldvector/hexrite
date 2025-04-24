@@ -1,8 +1,11 @@
 package io.codevector.hexrite.service.connection;
 
+import io.codevector.hexrite.dto.connection.ConnectionCreateRequest;
 import io.codevector.hexrite.models.SimpleResponse;
+import io.codevector.hexrite.persistence.Connection;
 import io.codevector.hexrite.repository.ConnectionRepository;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
+import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.quarkus.panache.common.Sort;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -40,6 +43,34 @@ public class ConnectionServiceImpl implements ConnectionService {
                     Response.status(Status.INTERNAL_SERVER_ERROR)
                         .entity(
                             SimpleResponse.create(Status.INTERNAL_SERVER_ERROR.getReasonPhrase()))
+                        .build()));
+  }
+
+  @WithTransaction
+  @Override
+  public Uni<Response> createConnection(ConnectionCreateRequest request) {
+    Connection connection = new Connection(request);
+    return connectionRepository
+        .persist(connection)
+        .onItem()
+        .transform(item -> Response.ok(item).build());
+  }
+
+  @WithTransaction
+  @Override
+  public Uni<Response> removeConnection(String connectionId) {
+    return connectionRepository
+        .delete(connectionId)
+        .onItem()
+        .transform(b -> Response.ok().build())
+        .onFailure()
+        .invoke(failure -> LOGGER.error("Failed to remove connection", failure))
+        .onFailure()
+        .transform(
+            throwable ->
+                new WebApplicationException(
+                    Response.status(Status.INTERNAL_SERVER_ERROR)
+                        .entity(SimpleResponse.create("Failed to remove connection"))
                         .build()));
   }
 }
