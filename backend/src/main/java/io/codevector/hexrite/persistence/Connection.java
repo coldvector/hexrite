@@ -77,6 +77,7 @@ public class Connection extends PanacheEntityBase {
   @PrePersist
   public void prePersist() {
     this.createdAt = Instant.now();
+    this.updatedAt = this.createdAt;
     if (this.id == null) {
       LOGGER.debugf("Generating new UUID manually for LLMProvider");
       this.id = UUID.randomUUID().toString();
