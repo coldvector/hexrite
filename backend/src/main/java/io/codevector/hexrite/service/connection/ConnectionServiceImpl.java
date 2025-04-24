@@ -47,8 +47,7 @@ public class ConnectionServiceImpl implements ConnectionService {
             throwable ->
                 new WebApplicationException(
                     Response.status(Status.INTERNAL_SERVER_ERROR)
-                        .entity(
-                            SimpleResponse.create(Status.INTERNAL_SERVER_ERROR.getReasonPhrase()))
+                        .entity(SimpleResponse.create(throwable.getMessage()))
                         .build()));
   }
 
@@ -59,7 +58,18 @@ public class ConnectionServiceImpl implements ConnectionService {
     return connectionRepository
         .persist(connection)
         .onItem()
-        .transform(item -> Response.ok(item).build());
+        .transform(connectionMapper::toConnectionListResponse)
+        .onItem()
+        .transform(item -> Response.ok(item).build())
+        .onFailure()
+        .invoke(failure -> LOGGER.error("Failed to create connection", failure))
+        .onFailure()
+        .transform(
+            throwable ->
+                new WebApplicationException(
+                    Response.status(Status.INTERNAL_SERVER_ERROR)
+                        .entity(SimpleResponse.create(throwable.getMessage()))
+                        .build()));
   }
 
   @WithTransaction
