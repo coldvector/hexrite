@@ -10,7 +10,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/connection")
+@Path("/v1/connection")
 public class ConnectionRest {
 
   private final ConnectionService connectionService;
