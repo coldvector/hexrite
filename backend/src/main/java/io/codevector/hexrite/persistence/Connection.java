@@ -2,7 +2,7 @@ package io.codevector.hexrite.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.codevector.hexrite.models.llm.ConnectionType;
+import io.codevector.hexrite.models.connection.ConnectionType;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
