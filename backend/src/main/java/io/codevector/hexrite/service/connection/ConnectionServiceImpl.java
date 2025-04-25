@@ -6,13 +6,13 @@ import io.codevector.hexrite.models.SimpleResponse;
 import io.codevector.hexrite.persistence.Connection;
 import io.codevector.hexrite.repository.ConnectionRepository;
 import io.codevector.hexrite.utils.JSONMapper;
+import io.codevector.hexrite.utils.UniUtils;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.quarkus.panache.common.Sort;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.jboss.logging.Logger;
@@ -39,19 +39,11 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     return connectionRepository
         .listAll(Sort.by("name").and("createdAt"))
+        .map(list1 -> list1.stream().map(connectionMapper::toConnectionListResponse).toList())
         .onItem()
-        .transform(list -> list.stream().map(connectionMapper::toConnectionListResponse).toList())
-        .onItem()
-        .transform(updatedList -> Response.ok(updatedList).build())
+        .transform(list2 -> UniUtils.handleSuccess(list2))
         .onFailure()
-        .invoke(failure -> LOG.error("Failed to list connections", failure))
-        .onFailure()
-        .transform(
-            throwable ->
-                new WebApplicationException(
-                    Response.status(Status.INTERNAL_SERVER_ERROR)
-                        .entity(SimpleResponse.create(throwable.getMessage()))
-                        .build()));
+        .transform(t -> UniUtils.handleFailure(LOG, t, "Failed to list connections"));
   }
 
   @WithTransaction
@@ -59,41 +51,36 @@ public class ConnectionServiceImpl implements ConnectionService {
   public Uni<Response> createConnection(ConnectionCreateRequest request) {
     LOG.debugf("createConnection: request=\"%s\"", JSONMapper.serialize(request));
 
-    Connection connection = new Connection(request);
     return connectionRepository
-        .persist(connection)
+        .persist(new Connection(request))
+        .map(connectionMapper::toConnectionListResponse)
         .onItem()
-        .transform(connectionMapper::toConnectionListResponse)
-        .onItem()
-        .transform(item -> Response.ok(item).build())
+        .transform(item -> UniUtils.handleSuccess(item))
         .onFailure()
-        .invoke(failure -> LOG.error("Failed to create connection", failure))
-        .onFailure()
-        .transform(
-            throwable ->
-                new WebApplicationException(
-                    Response.status(Status.INTERNAL_SERVER_ERROR)
-                        .entity(SimpleResponse.create(throwable.getMessage()))
-                        .build()));
+        .transform(t -> UniUtils.handleFailure(LOG, t, "Failed to create connection"));
   }
 
   @WithTransaction
   @Override
   public Uni<Response> removeConnection(String connectionId) {
-    LOG.debugf("createConnection: connectionId=\"%s\"", connectionId);
+    LOG.debugf("removeConnection: connectionId=\"%s\"", connectionId);
 
     return connectionRepository
-        .delete(connectionId)
+        .findById(connectionId)
         .onItem()
-        .transform(b -> Response.ok().build())
-        .onFailure()
-        .invoke(failure -> LOG.error("Failed to remove connection", failure))
-        .onFailure()
+        .ifNotNull()
+        .invoke(connection -> LOG.debugf("Found connection: %s", connection))
+        .chain(connection -> connectionRepository.deleteById(connectionId))
+        .onItem()
         .transform(
-            throwable ->
-                new WebApplicationException(
-                    Response.status(Status.INTERNAL_SERVER_ERROR)
-                        .entity(SimpleResponse.create("Failed to remove connection"))
-                        .build()));
+            b -> {
+              if (b) {
+                return Response.ok().build();
+              } else {
+                return Response.status(Status.NOT_FOUND)
+                    .entity(SimpleResponse.create("Connection not found"))
+                    .build();
+              }
+            });
   }
 }

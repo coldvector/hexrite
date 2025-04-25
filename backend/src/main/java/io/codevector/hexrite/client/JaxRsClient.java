@@ -2,6 +2,7 @@ package io.codevector.hexrite.client;
 
 import io.codevector.hexrite.models.SimpleResponse;
 import io.codevector.hexrite.utils.JSONMapper;
+import io.codevector.hexrite.utils.UniUtils;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -28,7 +29,6 @@ public class JaxRsClient implements RestClient {
 
   @Inject
   public JaxRsClient(@ConfigProperty(name = "timeout.secs", defaultValue = "5") long timeout) {
-
     this.client = ClientBuilder.newClient();
     this.timeout = Duration.ofSeconds(timeout);
   }
@@ -47,7 +47,7 @@ public class JaxRsClient implements RestClient {
         .transform(t -> this.handleFailure(t))
         .ifNoItem()
         .after(this.timeout)
-        .failWith(this.handleTimeout());
+        .failWith(UniUtils.handleTimeout());
   }
 
   @Override
@@ -64,7 +64,7 @@ public class JaxRsClient implements RestClient {
         .transform(t -> this.handleFailure(t))
         .ifNoItem()
         .after(this.timeout)
-        .failWith(this.handleTimeout());
+        .failWith(UniUtils.handleTimeout());
   }
 
   @Override
@@ -81,7 +81,7 @@ public class JaxRsClient implements RestClient {
         .transform(t -> this.handleFailure(t))
         .ifNoItem()
         .after(this.timeout)
-        .failWith(this.handleTimeout());
+        .failWith(UniUtils.handleTimeout());
   }
 
   @Override
@@ -98,7 +98,7 @@ public class JaxRsClient implements RestClient {
         .transform(t -> this.handleFailure(t))
         .ifNoItem()
         .after(this.timeout)
-        .failWith(this.handleTimeout());
+        .failWith(UniUtils.handleTimeout());
   }
 
   @Override
@@ -115,7 +115,7 @@ public class JaxRsClient implements RestClient {
         .transform(t -> this.handleFailure(t))
         .ifNoItem()
         .after(this.timeout)
-        .failWith(this.handleTimeout());
+        .failWith(UniUtils.handleTimeout());
   }
 
   private Response handleResponse(Response res) {
@@ -136,7 +136,7 @@ public class JaxRsClient implements RestClient {
   private Throwable handleFailure(Throwable t) {
     if (t instanceof WebApplicationException tw) {
       LOG.errorf(
-          "handleFailure: statusCode=\"%s\", statusMessage=\"%s\" error=\"%s\"",
+          "handleFailure: statusCode=\"%s\", statusMessage=\"%s\", error=\"%s\"",
           tw.getResponse().getStatus(),
           tw.getResponse().getStatusInfo().getReasonPhrase(),
           tw.getLocalizedMessage());
@@ -146,16 +146,9 @@ public class JaxRsClient implements RestClient {
       LOG.errorf("handleFailure: error=\"%s\"", t.getLocalizedMessage());
 
       return new WebApplicationException(
-          Response.status(Status.INTERNAL_SERVER_ERROR)
+          Response.status(Status.SERVICE_UNAVAILABLE)
               .entity(SimpleResponse.create(t.getLocalizedMessage()))
               .build());
     }
-  }
-
-  private Throwable handleTimeout() {
-    return new WebApplicationException(
-        Response.status(Status.GATEWAY_TIMEOUT)
-            .entity(SimpleResponse.create("Request timeout"))
-            .build());
   }
 }
