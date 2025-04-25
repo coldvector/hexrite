@@ -21,7 +21,7 @@ import org.jboss.logging.Logger;
 @ApplicationScoped
 public class JaxRsClient implements RestClient {
 
-  private static final Logger LOGGER = Logger.getLogger(JaxRsClient.class.getSimpleName());
+  private static final Logger LOG = Logger.getLogger(JaxRsClient.class.getSimpleName());
 
   private final Client client;
   private final Duration timeout;
@@ -35,7 +35,7 @@ public class JaxRsClient implements RestClient {
 
   @Override
   public Uni<Response> getRequest(String uri, Map<String, String> headers) {
-    LOGGER.infof("getRequest: uri=\"%s\"", uri);
+    LOG.debugf("getRequest: uri=\"%s\"", uri);
 
     CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
 
@@ -52,8 +52,7 @@ public class JaxRsClient implements RestClient {
 
   @Override
   public Uni<Response> postRequest(String uri, Map<String, String> headers, Object payload) {
-    LOGGER.infof("postRequest: uri=\"%s\"", uri);
-    LOGGER.debugf("postRequest: payload=\"%s\"", JSONMapper.serialize(payload));
+    LOG.debugf("postRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
     CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
 
@@ -70,8 +69,7 @@ public class JaxRsClient implements RestClient {
 
   @Override
   public Uni<Response> putRequest(String uri, Map<String, String> headers, Object payload) {
-    LOGGER.infof("putRequest: uri=\"%s\"", uri);
-    LOGGER.debugf("putRequest: payload=\"%s\"", JSONMapper.serialize(payload));
+    LOG.debugf("putRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
     CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
 
@@ -88,8 +86,7 @@ public class JaxRsClient implements RestClient {
 
   @Override
   public Uni<Response> patchRequest(String uri, Map<String, String> headers, Object payload) {
-    LOGGER.infof("patchRequest: uri=\"%s\"", uri);
-    LOGGER.debugf("patchRequest: payload=\"%s\"", JSONMapper.serialize(payload));
+    LOG.debugf("patchRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
     CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
 
@@ -106,7 +103,7 @@ public class JaxRsClient implements RestClient {
 
   @Override
   public Uni<Response> deleteRequest(String uri, Map<String, String> headers) {
-    LOGGER.infof("deleteRequest: uri=\"%s\"", uri);
+    LOG.debugf("deleteRequest: uri=\"%s\"", uri);
 
     CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
 
@@ -122,9 +119,9 @@ public class JaxRsClient implements RestClient {
   }
 
   private Response handleResponse(Response res) {
-    LOGGER.infof("handleResponse: status=\"%s\"", res.getStatus());
-    LOGGER.debugf(
-        "handleResponse: headers=\"%s\", startBuffer=\"%b\", body=\"%s\"",
+    LOG.debugf(
+        "handleResponse: status=\"%s\", headers=\"%s\", startBuffer=\"%b\", body=\"%s\"",
+        res.getStatus(),
         res.getHeaders(),
         res.bufferEntity(),
         JSONMapper.serialize(res.readEntity(JsonObject.class)));
@@ -138,7 +135,7 @@ public class JaxRsClient implements RestClient {
 
   private Throwable handleFailure(Throwable t) {
     if (t instanceof WebApplicationException tw) {
-      LOGGER.errorf(
+      LOG.errorf(
           "handleFailure: statusCode=\"%s\", statusMessage=\"%s\" error=\"%s\"",
           tw.getResponse().getStatus(),
           tw.getResponse().getStatusInfo().getReasonPhrase(),
@@ -146,7 +143,7 @@ public class JaxRsClient implements RestClient {
 
       return new WebApplicationException(tw.getResponse());
     } else {
-      LOGGER.errorf("handleFailure: error=\"%s\"", t.getLocalizedMessage());
+      LOG.errorf("handleFailure: error=\"%s\"", t.getLocalizedMessage());
 
       return new WebApplicationException(
           Response.status(Status.INTERNAL_SERVER_ERROR)

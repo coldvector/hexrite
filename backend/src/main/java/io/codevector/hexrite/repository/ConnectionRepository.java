@@ -9,12 +9,12 @@ import org.jboss.logging.Logger;
 @ApplicationScoped
 public class ConnectionRepository implements PanacheRepository<Connection> {
 
-  private static final Logger LOGGER = Logger.getLogger(ConnectionRepository.class.getSimpleName());
+  private static final Logger LOG = Logger.getLogger(ConnectionRepository.class.getSimpleName());
 
   public Uni<Boolean> delete(String connectionId) {
     return delete("id", connectionId)
         .onItem()
-        .invoke(l -> LOGGER.infof("Deleted connection: %d", l))
+        .invoke(l -> LOG.infof("delete: %d Connection(s) deleted", l))
         .onItem()
         .transform(l -> l > 0);
   }

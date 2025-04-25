@@ -23,7 +23,7 @@ import org.jboss.logging.Logger;
 @Table(name = "connection")
 public class Connection extends PanacheEntityBase {
 
-  private static final Logger LOGGER = Logger.getLogger(Connection.class.getSimpleName());
+  private static final Logger LOG = Logger.getLogger(Connection.class.getSimpleName());
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -79,10 +79,10 @@ public class Connection extends PanacheEntityBase {
     this.createdAt = Instant.now();
     this.updatedAt = this.createdAt;
     if (this.id == null) {
-      LOGGER.debugf("Generating new UUID manually for LLMProvider");
+      LOG.debugf("prePersist: generating new UUID for Connection");
       this.id = UUID.randomUUID().toString();
     } else {
-      LOGGER.debugf("Using existing UUID for LLMProvider: \"%s\"", this.id);
+      LOG.debugf("prePersist: using existing UUID for Connection");
     }
   }
 

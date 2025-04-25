@@ -5,6 +5,7 @@ import io.codevector.hexrite.dto.connection.ConnectionMapper;
 import io.codevector.hexrite.models.SimpleResponse;
 import io.codevector.hexrite.persistence.Connection;
 import io.codevector.hexrite.repository.ConnectionRepository;
+import io.codevector.hexrite.utils.JSONMapper;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.quarkus.panache.common.Sort;
@@ -19,7 +20,7 @@ import org.jboss.logging.Logger;
 @ApplicationScoped
 public class ConnectionServiceImpl implements ConnectionService {
 
-  private static final Logger LOGGER = Logger.getLogger(ConnectionService.class.getSimpleName());
+  private static final Logger LOG = Logger.getLogger(ConnectionService.class.getSimpleName());
 
   private final ConnectionRepository connectionRepository;
   private final ConnectionMapper connectionMapper;
@@ -34,6 +35,8 @@ public class ConnectionServiceImpl implements ConnectionService {
   @WithSession
   @Override
   public Uni<Response> listConnections() {
+    LOG.debugf("listConnections");
+
     return connectionRepository
         .listAll(Sort.by("name").and("createdAt"))
         .onItem()
@@ -41,7 +44,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         .onItem()
         .transform(updatedList -> Response.ok(updatedList).build())
         .onFailure()
-        .invoke(failure -> LOGGER.error("Failed to list connections", failure))
+        .invoke(failure -> LOG.error("Failed to list connections", failure))
         .onFailure()
         .transform(
             throwable ->
@@ -54,6 +57,8 @@ public class ConnectionServiceImpl implements ConnectionService {
   @WithTransaction
   @Override
   public Uni<Response> createConnection(ConnectionCreateRequest request) {
+    LOG.debugf("createConnection: request=\"%s\"", JSONMapper.serialize(request));
+
     Connection connection = new Connection(request);
     return connectionRepository
         .persist(connection)
@@ -62,7 +67,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         .onItem()
         .transform(item -> Response.ok(item).build())
         .onFailure()
-        .invoke(failure -> LOGGER.error("Failed to create connection", failure))
+        .invoke(failure -> LOG.error("Failed to create connection", failure))
         .onFailure()
         .transform(
             throwable ->
@@ -75,12 +80,14 @@ public class ConnectionServiceImpl implements ConnectionService {
   @WithTransaction
   @Override
   public Uni<Response> removeConnection(String connectionId) {
+    LOG.debugf("createConnection: connectionId=\"%s\"", connectionId);
+
     return connectionRepository
         .delete(connectionId)
         .onItem()
         .transform(b -> Response.ok().build())
         .onFailure()
-        .invoke(failure -> LOGGER.error("Failed to remove connection", failure))
+        .invoke(failure -> LOG.error("Failed to remove connection", failure))
         .onFailure()
         .transform(
             throwable ->

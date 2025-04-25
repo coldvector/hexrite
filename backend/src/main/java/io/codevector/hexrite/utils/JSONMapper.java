@@ -8,7 +8,7 @@ import org.jboss.logging.Logger;
 
 public class JSONMapper {
 
-  private static final Logger LOGGER = Logger.getLogger(JSONMapper.class.getSimpleName());
+  private static final Logger LOG = Logger.getLogger(JSONMapper.class.getSimpleName());
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
   static {
@@ -29,7 +29,7 @@ public class JSONMapper {
     try {
       return objectMapper.writeValueAsString(obj);
     } catch (Throwable t) {
-      LOGGER.errorf("Serialization error: %s", t.getMessage());
+      LOG.errorf("serialize error: %s", t.getMessage());
       return "";
     }
   }
@@ -38,7 +38,7 @@ public class JSONMapper {
     try {
       return objectMapper.readValue(str, type);
     } catch (Throwable t) {
-      LOGGER.errorf("Deserialization error: %s", t.getMessage());
+      LOG.errorf("deserialize error: %s", t.getMessage());
       return null;
     }
   }
@@ -47,7 +47,7 @@ public class JSONMapper {
     try {
       return objectMapper.readValue(str, type);
     } catch (Throwable t) {
-      LOGGER.errorf("Deserialization error: %s", t.getMessage());
+      LOG.errorf("deserialize error: %s", t.getMessage());
       return null;
     }
   }

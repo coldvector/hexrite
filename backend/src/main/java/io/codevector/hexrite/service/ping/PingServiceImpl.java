@@ -10,11 +10,11 @@ import org.jboss.logging.Logger;
 @ApplicationScoped
 public class PingServiceImpl implements PingService {
 
-  private static final Logger LOGGER = Logger.getLogger(PingService.class.getSimpleName());
+  private static final Logger LOG = Logger.getLogger(PingService.class.getSimpleName());
 
   @Override
   public Uni<Response> ping() {
-    LOGGER.debugf("ping");
+    LOG.debugf("ping");
 
     Response res = Response.status(Status.OK).entity(SimpleResponse.create("Hello!")).build();
 
