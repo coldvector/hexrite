@@ -1,19 +1,15 @@
 package io.codevector.hexrite.client;
 
-import io.codevector.hexrite.models.SimpleResponse;
 import io.codevector.hexrite.utils.JSONMapper;
 import io.codevector.hexrite.utils.UniUtils;
 import io.smallrye.mutiny.Uni;
-import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.CompletionStageRxInvoker;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import java.time.Duration;
 import java.util.Map;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -42,9 +38,9 @@ public class JaxRsClient implements RestClient {
     return Uni.createFrom()
         .completionStage(invoker.get())
         .onItem()
-        .transform(r -> this.handleResponse(r))
+        .transform(r -> UniUtils.handleResponse(LOG, r))
         .onFailure()
-        .transform(t -> this.handleFailure(t))
+        .transform(t -> UniUtils.handleFailure(LOG, t))
         .ifNoItem()
         .after(this.timeout)
         .failWith(() -> UniUtils.handleTimeout());
@@ -59,9 +55,9 @@ public class JaxRsClient implements RestClient {
     return Uni.createFrom()
         .completionStage(invoker.post(Entity.json(payload)))
         .onItem()
-        .transform(r -> this.handleResponse(r))
+        .transform(r -> UniUtils.handleResponse(LOG, r))
         .onFailure()
-        .transform(t -> this.handleFailure(t))
+        .transform(t -> UniUtils.handleFailure(LOG, t))
         .ifNoItem()
         .after(this.timeout)
         .failWith(() -> UniUtils.handleTimeout());
@@ -76,9 +72,9 @@ public class JaxRsClient implements RestClient {
     return Uni.createFrom()
         .completionStage(invoker.put(Entity.json(payload)))
         .onItem()
-        .transform(r -> this.handleResponse(r))
+        .transform(r -> UniUtils.handleResponse(LOG, r))
         .onFailure()
-        .transform(t -> this.handleFailure(t))
+        .transform(t -> UniUtils.handleFailure(LOG, t))
         .ifNoItem()
         .after(this.timeout)
         .failWith(() -> UniUtils.handleTimeout());
@@ -93,9 +89,9 @@ public class JaxRsClient implements RestClient {
     return Uni.createFrom()
         .completionStage(invoker.method("PATCH", Entity.json(payload)))
         .onItem()
-        .transform(r -> this.handleResponse(r))
+        .transform(r -> UniUtils.handleResponse(LOG, r))
         .onFailure()
-        .transform(t -> this.handleFailure(t))
+        .transform(t -> UniUtils.handleFailure(LOG, t))
         .ifNoItem()
         .after(this.timeout)
         .failWith(() -> UniUtils.handleTimeout());
@@ -110,45 +106,11 @@ public class JaxRsClient implements RestClient {
     return Uni.createFrom()
         .completionStage(invoker.delete())
         .onItem()
-        .transform(r -> this.handleResponse(r))
+        .transform(r -> UniUtils.handleResponse(LOG, r))
         .onFailure()
-        .transform(t -> this.handleFailure(t))
+        .transform(t -> UniUtils.handleFailure(LOG, t))
         .ifNoItem()
         .after(this.timeout)
         .failWith(() -> UniUtils.handleTimeout());
-  }
-
-  private Response handleResponse(Response res) {
-    LOG.debugf(
-        "handleResponse: status=\"%s\", headers=\"%s\", startBuffer=\"%b\", body=\"%s\"",
-        res.getStatus(),
-        res.getHeaders(),
-        res.bufferEntity(),
-        JSONMapper.serialize(res.readEntity(JsonObject.class)));
-
-    if (res.getStatus() >= 200 && res.getStatus() < 400) {
-      return res;
-    } else {
-      throw new WebApplicationException(res);
-    }
-  }
-
-  private Throwable handleFailure(Throwable t) {
-    if (t instanceof WebApplicationException tw) {
-      LOG.errorf(
-          "handleFailure: statusCode=\"%s\", statusMessage=\"%s\", error=\"%s\"",
-          tw.getResponse().getStatus(),
-          tw.getResponse().getStatusInfo().getReasonPhrase(),
-          tw.getLocalizedMessage());
-
-      return new WebApplicationException(tw.getResponse());
-    } else {
-      LOG.errorf("handleFailure: error=\"%s\"", t.getLocalizedMessage());
-
-      return new WebApplicationException(
-          Response.status(Status.SERVICE_UNAVAILABLE)
-              .entity(SimpleResponse.create(t.getLocalizedMessage()))
-              .build());
-    }
   }
 }
