@@ -10,8 +10,8 @@ import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -31,6 +31,13 @@ public class ConnectionRest {
     return this.connectionService.listConnections();
   }
 
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/{id}")
+  public Uni<Response> getConnectionById(@PathParam("id") String connectionId) {
+    return this.connectionService.getConnectionById(connectionId);
+  }
+
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
@@ -39,7 +46,8 @@ public class ConnectionRest {
   }
 
   @DELETE
-  public Uni<Response> removeConnection(@QueryParam("id") String connectionId) {
+  @Path("/{id}")
+  public Uni<Response> removeConnection(@PathParam("id") String connectionId) {
     return this.connectionService.removeConnection(connectionId);
   }
 }

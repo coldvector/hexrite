@@ -44,6 +44,28 @@ public class ConnectionServiceImpl implements ConnectionService {
         .transform(list2 -> UniUtils.handleSuccess(list2));
   }
 
+  @WithSession
+  @Override
+  public Uni<Response> getConnectionById(String connectionId) {
+    LOG.debugf("getConnectionById: connectionId=\"%s\"", connectionId);
+
+    return connectionRepository
+        .findById(connectionId)
+        .onItem()
+        .ifNotNull()
+        .invoke(connection -> LOG.debugf("Found connection: %s", connection))
+        .onItem()
+        .ifNull()
+        .failWith(
+            () ->
+                UniUtils.handleFailure(
+                    LOG,
+                    Status.NOT_FOUND,
+                    String.format("Connection with id '%s' not found", connectionId)))
+        .onItem()
+        .transform(UniUtils::handleSuccess);
+  }
+
   @WithTransaction
   @Override
   public Uni<Response> createConnection(ConnectionRequest request) {
