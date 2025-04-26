@@ -74,6 +74,16 @@ public class Connection extends PanacheEntityBase {
     this.apiKey = request.apiKey();
   }
 
+  public Connection mutateConnection(ConnectionRequest updateRequest) {
+    this.name = updateRequest.name();
+    this.description = updateRequest.description();
+    this.type = updateRequest.type();
+    this.baseUrl = updateRequest.baseUrl().toString();
+    this.apiKey = updateRequest.apiKey();
+    this.isEnabled = updateRequest.isEnabled();
+    return this;
+  }
+
   @PrePersist
   public void prePersist() {
     this.createdAt = Instant.now();

@@ -80,6 +80,19 @@ public class ConnectionServiceImpl implements ConnectionService {
 
   @WithTransaction
   @Override
+  public Uni<Response> updateConnection(String connectionId, ConnectionRequest request) {
+    LOG.debugf("updateConnection: request=\"%s\"", JSONMapper.serialize(request));
+
+    return validateUpdateConnectionRequest(connectionId, request)
+        .onItem()
+        .transform(existingConnection -> existingConnection.mutateConnection(request))
+        .map(connectionMapper::toConnectionListResponse)
+        .onItem()
+        .transform(UniUtils::handleSuccess);
+  }
+
+  @WithTransaction
+  @Override
   public Uni<Response> removeConnection(String connectionId) {
     LOG.debugf("removeConnection: connectionId=\"%s\"", connectionId);
 
@@ -116,5 +129,41 @@ public class ConnectionServiceImpl implements ConnectionService {
         .onItem()
         .ifNull()
         .continueWith(new Connection(request));
+  }
+
+  private Uni<Connection> validateUpdateConnectionRequest(
+      String connectionId, ConnectionRequest request) {
+    return connectionRepository
+        .findById(connectionId)
+        .onItem()
+        .ifNull()
+        .failWith(
+            () ->
+                UniUtils.handleFailure(
+                    LOG,
+                    Status.NOT_FOUND,
+                    String.format("Connection with id '%s' not found", connectionId)))
+        .chain(
+            existingConnection ->
+                validateConnectionNameChange(connectionId, request, existingConnection));
+  }
+
+  private Uni<Connection> validateConnectionNameChange(
+      String connectionId, ConnectionRequest request, Connection existingConnection) {
+    if (existingConnection.name.equals(request.name())) {
+      return Uni.createFrom().item(existingConnection);
+    } else {
+      return connectionRepository
+          .findByNameNotId(connectionId, request.name())
+          .onItem()
+          .ifNotNull()
+          .failWith(
+              () ->
+                  UniUtils.handleFailure(
+                      LOG,
+                      Status.CONFLICT,
+                      String.format("Connection '%s' already exists", request.name())))
+          .replaceWith(existingConnection);
+    }
   }
 }

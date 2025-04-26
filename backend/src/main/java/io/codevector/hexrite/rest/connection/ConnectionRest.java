@@ -9,6 +9,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -43,6 +44,15 @@ public class ConnectionRest {
   @Consumes(MediaType.APPLICATION_JSON)
   public Uni<Response> createConnection(ConnectionRequest request) {
     return this.connectionService.createConnection(request);
+  }
+
+  @PUT
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Path("/{id}")
+  public Uni<Response> updateConnection(
+      @PathParam("id") String connectionId, ConnectionRequest request) {
+    return this.connectionService.updateConnection(connectionId, request);
   }
 
   @DELETE

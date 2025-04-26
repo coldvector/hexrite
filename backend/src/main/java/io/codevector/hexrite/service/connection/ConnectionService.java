@@ -12,5 +12,7 @@ public interface ConnectionService {
 
   public Uni<Response> createConnection(ConnectionRequest request);
 
+  public Uni<Response> updateConnection(String connectionId, ConnectionRequest request);
+
   public Uni<Response> removeConnection(String connectionId);
 }
