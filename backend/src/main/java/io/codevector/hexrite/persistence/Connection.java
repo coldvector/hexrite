@@ -2,7 +2,7 @@ package io.codevector.hexrite.persistence;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
-import io.codevector.hexrite.dto.connection.ConnectionCreateRequest;
+import io.codevector.hexrite.dto.connection.ConnectionRequest;
 import io.codevector.hexrite.models.connection.ConnectionType;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
@@ -66,7 +66,7 @@ public class Connection extends PanacheEntityBase {
   @RequiredForJPA
   public Connection() {}
 
-  public Connection(ConnectionCreateRequest request) {
+  public Connection(ConnectionRequest request) {
     this.name = request.name();
     this.description = request.description();
     this.type = request.type();

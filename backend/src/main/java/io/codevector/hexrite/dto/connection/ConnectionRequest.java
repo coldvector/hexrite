@@ -6,7 +6,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.net.URI;
 
 @RegisterForReflection
-public record ConnectionCreateRequest(
+public record ConnectionRequest(
     @JsonProperty("name") String name,
     @JsonProperty("description") String description,
     @JsonProperty("type") ConnectionType type,

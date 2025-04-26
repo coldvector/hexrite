@@ -1,6 +1,6 @@
 package io.codevector.hexrite.rest.connection;
 
-import io.codevector.hexrite.dto.connection.ConnectionCreateRequest;
+import io.codevector.hexrite.dto.connection.ConnectionRequest;
 import io.codevector.hexrite.service.connection.ConnectionService;
 import io.codevector.hexrite.service.connection.ConnectionServiceImpl;
 import io.smallrye.mutiny.Uni;
@@ -34,7 +34,7 @@ public class ConnectionRest {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  public Uni<Response> createConnection(ConnectionCreateRequest request) {
+  public Uni<Response> createConnection(ConnectionRequest request) {
     return this.connectionService.createConnection(request);
   }
 

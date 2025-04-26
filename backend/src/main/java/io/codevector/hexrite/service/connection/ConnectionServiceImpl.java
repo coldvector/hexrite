@@ -1,7 +1,7 @@
 package io.codevector.hexrite.service.connection;
 
-import io.codevector.hexrite.dto.connection.ConnectionCreateRequest;
 import io.codevector.hexrite.dto.connection.ConnectionMapper;
+import io.codevector.hexrite.dto.connection.ConnectionRequest;
 import io.codevector.hexrite.models.SimpleResponse;
 import io.codevector.hexrite.persistence.Connection;
 import io.codevector.hexrite.repository.ConnectionRepository;
@@ -46,7 +46,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
   @WithTransaction
   @Override
-  public Uni<Response> createConnection(ConnectionCreateRequest request) {
+  public Uni<Response> createConnection(ConnectionRequest request) {
     LOG.debugf("createConnection: request=\"%s\"", JSONMapper.serialize(request));
 
     return validateCreateConnectionRequest(request)
@@ -80,7 +80,7 @@ public class ConnectionServiceImpl implements ConnectionService {
             });
   }
 
-  private Uni<Connection> validateCreateConnectionRequest(ConnectionCreateRequest request) {
+  private Uni<Connection> validateCreateConnectionRequest(ConnectionRequest request) {
     return connectionRepository
         .findByName(request.name())
         .onItem()
