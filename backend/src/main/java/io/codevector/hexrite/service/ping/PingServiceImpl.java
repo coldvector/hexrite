@@ -1,6 +1,5 @@
 package io.codevector.hexrite.service.ping;
 
-import io.codevector.hexrite.models.SimpleResponse;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.core.Response;
@@ -16,7 +15,7 @@ public class PingServiceImpl implements PingService {
   public Uni<Response> ping() {
     LOG.debugf("ping");
 
-    Response res = Response.status(Status.OK).entity(SimpleResponse.create("Hello!")).build();
+    Response res = Response.status(Status.OK).entity("Hexrite is running").build();
 
     return Uni.createFrom().item(res);
   }

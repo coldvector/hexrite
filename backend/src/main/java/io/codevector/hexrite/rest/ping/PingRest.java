@@ -20,7 +20,7 @@ public class PingRest {
   }
 
   @GET
-  @Produces(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.TEXT_PLAIN)
   public Uni<Response> greet() {
     return this.service.ping();
   }

@@ -2,7 +2,7 @@ package io.codevector.hexrite.service.connection;
 
 import io.codevector.hexrite.dto.connection.ConnectionMapper;
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
-import io.codevector.hexrite.models.SimpleResponse;
+import io.codevector.hexrite.models.ErrorBody;
 import io.codevector.hexrite.persistence.Connection;
 import io.codevector.hexrite.repository.ConnectionRepository;
 import io.codevector.hexrite.utils.JSONMapper;
@@ -109,7 +109,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 return Response.ok().build();
               } else {
                 return Response.status(Status.NOT_FOUND)
-                    .entity(SimpleResponse.create("Connection not found"))
+                    .entity(ErrorBody.create(Status.NOT_FOUND, "Connection not found"))
                     .build();
               }
             });

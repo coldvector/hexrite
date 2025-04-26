@@ -1,6 +1,6 @@
 package io.codevector.hexrite.utils;
 
-import io.codevector.hexrite.models.SimpleResponse;
+import io.codevector.hexrite.models.ErrorBody;
 import io.vertx.core.json.JsonObject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.WebApplicationException;
@@ -39,17 +39,13 @@ public class UniUtils {
       LOG.errorf("handleFailure: error=\"%s\"", t.getLocalizedMessage());
 
       return new WebApplicationException(
-          Response.status(Status.SERVICE_UNAVAILABLE)
-              .entity(SimpleResponse.create(t.getLocalizedMessage()))
-              .build());
+          createErrorResponse(Status.SERVICE_UNAVAILABLE, t.getLocalizedMessage()));
     }
   }
 
   public static Throwable handleTimeout() {
     return new WebApplicationException(
-        Response.status(Response.Status.GATEWAY_TIMEOUT)
-            .entity(SimpleResponse.create("Request timeout"))
-            .build());
+        createErrorResponse(Status.GATEWAY_TIMEOUT, "Request timeout"));
   }
 
   public static Response handleSuccess(Object obj) {
@@ -58,25 +54,31 @@ public class UniUtils {
 
   public static Throwable handleFailure(Logger LOG, Throwable t, Status status, String message) {
     LOG.errorf(t, "handleFailure: message=\"%s\", reason=\"%s\"", message, t.getLocalizedMessage());
-    return new WebApplicationException(
-        Response.status(status).entity(SimpleResponse.create(message)).build());
+    return new WebApplicationException(createErrorResponse(status, message));
   }
 
   public static Throwable handleFailure(Logger LOG, Status status, String message) {
     LOG.errorf("handleFailure: message=\"%s\"", message);
-    return new WebApplicationException(
-        Response.status(status).entity(SimpleResponse.create(message)).build());
+    return new WebApplicationException(createErrorResponse(status, message));
   }
 
   public static Throwable handleFailure(Logger LOG, Throwable t, String message) {
     LOG.errorf(t, "handleFailure: message=\"%s\", reason=\"%s\"", message, t.getLocalizedMessage());
-    return new WebApplicationException(
-        Response.status(Status.SERVICE_UNAVAILABLE).entity(SimpleResponse.create(message)).build());
+    return new WebApplicationException(createErrorResponse(message));
   }
 
   public static Throwable handleFailure(Logger LOG, String message) {
     LOG.errorf("handleFailure: message=\"%s\"", message);
-    return new WebApplicationException(
-        Response.status(Status.SERVICE_UNAVAILABLE).entity(SimpleResponse.create(message)).build());
+    return new WebApplicationException(createErrorResponse(message));
+  }
+
+  private static Response createErrorResponse(Status status, String message) {
+    return Response.status(status).entity(ErrorBody.create(status, message)).build();
+  }
+
+  private static Response createErrorResponse(String message) {
+    return Response.status(Status.SERVICE_UNAVAILABLE)
+        .entity(ErrorBody.create(Status.SERVICE_UNAVAILABLE, message))
+        .build();
   }
 }
