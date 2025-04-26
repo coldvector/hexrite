@@ -72,11 +72,11 @@ public class UniUtils {
     return new WebApplicationException(createErrorResponse(message));
   }
 
-  private static Response createErrorResponse(Status status, String message) {
+  public static Response createErrorResponse(Status status, String message) {
     return Response.status(status).entity(ErrorBody.create(status, message)).build();
   }
 
-  private static Response createErrorResponse(String message) {
+  public static Response createErrorResponse(String message) {
     return Response.status(Status.SERVICE_UNAVAILABLE)
         .entity(ErrorBody.create(Status.SERVICE_UNAVAILABLE, message))
         .build();
