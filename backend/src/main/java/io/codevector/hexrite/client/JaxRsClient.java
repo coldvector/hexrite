@@ -47,7 +47,7 @@ public class JaxRsClient implements RestClient {
         .transform(t -> this.handleFailure(t))
         .ifNoItem()
         .after(this.timeout)
-        .failWith(UniUtils.handleTimeout());
+        .failWith(() -> UniUtils.handleTimeout());
   }
 
   @Override
@@ -64,7 +64,7 @@ public class JaxRsClient implements RestClient {
         .transform(t -> this.handleFailure(t))
         .ifNoItem()
         .after(this.timeout)
-        .failWith(UniUtils.handleTimeout());
+        .failWith(() -> UniUtils.handleTimeout());
   }
 
   @Override
@@ -81,7 +81,7 @@ public class JaxRsClient implements RestClient {
         .transform(t -> this.handleFailure(t))
         .ifNoItem()
         .after(this.timeout)
-        .failWith(UniUtils.handleTimeout());
+        .failWith(() -> UniUtils.handleTimeout());
   }
 
   @Override
@@ -98,7 +98,7 @@ public class JaxRsClient implements RestClient {
         .transform(t -> this.handleFailure(t))
         .ifNoItem()
         .after(this.timeout)
-        .failWith(UniUtils.handleTimeout());
+        .failWith(() -> UniUtils.handleTimeout());
   }
 
   @Override
@@ -115,7 +115,7 @@ public class JaxRsClient implements RestClient {
         .transform(t -> this.handleFailure(t))
         .ifNoItem()
         .after(this.timeout)
-        .failWith(UniUtils.handleTimeout());
+        .failWith(() -> UniUtils.handleTimeout());
   }
 
   private Response handleResponse(Response res) {
