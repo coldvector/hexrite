@@ -62,8 +62,20 @@ public class UniUtils {
         Response.status(status).entity(SimpleResponse.create(message)).build());
   }
 
+  public static Throwable handleFailure(Logger LOG, Status status, String message) {
+    LOG.errorf("handleFailure: message=\"%s\"", message);
+    return new WebApplicationException(
+        Response.status(status).entity(SimpleResponse.create(message)).build());
+  }
+
   public static Throwable handleFailure(Logger LOG, Throwable t, String message) {
     LOG.errorf(t, "handleFailure: message=\"%s\", reason=\"%s\"", message, t.getLocalizedMessage());
+    return new WebApplicationException(
+        Response.status(Status.SERVICE_UNAVAILABLE).entity(SimpleResponse.create(message)).build());
+  }
+
+  public static Throwable handleFailure(Logger LOG, String message) {
+    LOG.errorf("handleFailure: message=\"%s\"", message);
     return new WebApplicationException(
         Response.status(Status.SERVICE_UNAVAILABLE).entity(SimpleResponse.create(message)).build());
   }

@@ -41,9 +41,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         .listAll(Sort.by("name").and("createdAt"))
         .map(list1 -> list1.stream().map(connectionMapper::toConnectionListResponse).toList())
         .onItem()
-        .transform(list2 -> UniUtils.handleSuccess(list2))
-        .onFailure()
-        .transform(t -> UniUtils.handleFailure(LOG, t, "Failed to list connections"));
+        .transform(list2 -> UniUtils.handleSuccess(list2));
   }
 
   @WithTransaction
@@ -51,13 +49,11 @@ public class ConnectionServiceImpl implements ConnectionService {
   public Uni<Response> createConnection(ConnectionCreateRequest request) {
     LOG.debugf("createConnection: request=\"%s\"", JSONMapper.serialize(request));
 
-    return connectionRepository
-        .persist(new Connection(request))
+    return validateCreateConnectionRequest(request)
+        .chain(connectionRepository::persist)
         .map(connectionMapper::toConnectionListResponse)
         .onItem()
-        .transform(item -> UniUtils.handleSuccess(item))
-        .onFailure()
-        .transform(t -> UniUtils.handleFailure(LOG, t, "Failed to create connection"));
+        .transform(UniUtils::handleSuccess);
   }
 
   @WithTransaction
@@ -82,5 +78,21 @@ public class ConnectionServiceImpl implements ConnectionService {
                     .build();
               }
             });
+  }
+
+  private Uni<Connection> validateCreateConnectionRequest(ConnectionCreateRequest request) {
+    return connectionRepository
+        .findByName(request.name())
+        .onItem()
+        .ifNotNull()
+        .failWith(
+            () ->
+                UniUtils.handleFailure(
+                    LOG,
+                    Status.CONFLICT,
+                    String.format("Connection '%s' already exists", request.name())))
+        .onItem()
+        .ifNull()
+        .continueWith(new Connection(request));
   }
 }
