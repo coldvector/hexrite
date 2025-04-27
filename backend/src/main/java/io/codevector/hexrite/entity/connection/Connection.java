@@ -20,7 +20,7 @@ import java.util.UUID;
 import org.jboss.logging.Logger;
 
 @Entity
-@Table(name = "connection")
+@Table(name = "connections")
 public class Connection extends PanacheEntityBase {
 
   private static final Logger LOG = Logger.getLogger(Connection.class.getSimpleName());

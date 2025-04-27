@@ -1,4 +1,4 @@
-create table hexrite.connection (
+create table hexrite.connections (
     id varchar(255) not null,
     name varchar(255) not null unique,
     description varchar(255),

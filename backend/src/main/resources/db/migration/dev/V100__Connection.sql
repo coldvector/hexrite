@@ -1,4 +1,4 @@
-INSERT INTO hexrite.connection (
+INSERT INTO hexrite.connections (
         "id",
         "name",
         "description",
