@@ -2,8 +2,8 @@ package io.codevector.hexrite.service.connection;
 
 import io.codevector.hexrite.dto.connection.ConnectionMapper;
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
-import io.codevector.hexrite.persistence.Connection;
-import io.codevector.hexrite.repository.ConnectionRepository;
+import io.codevector.hexrite.entity.connection.Connection;
+import io.codevector.hexrite.repository.connection.ConnectionRepository;
 import io.codevector.hexrite.utils.JSONMapper;
 import io.codevector.hexrite.utils.UniUtils;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;

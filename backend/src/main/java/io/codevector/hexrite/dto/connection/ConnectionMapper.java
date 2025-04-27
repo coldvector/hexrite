@@ -1,6 +1,6 @@
 package io.codevector.hexrite.dto.connection;
 
-import io.codevector.hexrite.persistence.Connection;
+import io.codevector.hexrite.entity.connection.Connection;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.inject.Singleton;
 

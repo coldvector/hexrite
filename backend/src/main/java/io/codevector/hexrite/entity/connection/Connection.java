@@ -1,4 +1,4 @@
-package io.codevector.hexrite.persistence;
+package io.codevector.hexrite.entity.connection;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;

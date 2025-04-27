@@ -1,6 +1,6 @@
-package io.codevector.hexrite.repository;
+package io.codevector.hexrite.repository.connection;
 
-import io.codevector.hexrite.persistence.Connection;
+import io.codevector.hexrite.entity.connection.Connection;
 import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
