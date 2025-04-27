@@ -30,4 +30,15 @@ VALUES (
         '2025-04-23 18:19:15.10535+00',
         '2025-04-23 18:19:15.10535+00',
         false
+    ),
+    (
+        'ba907b31-9175-4ed3-ad24-f35e764145c4',
+        'Gemini API Key 1',
+        'GCP Project 111122223333',
+        'GEMINI',
+        'https://generativelanguage.googleapis.com/v1beta',
+        'XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+        '2025-04-25 11:19:15.10535+00',
+        '2025-04-25 13:19:15.10535+00',
+        true
     );
