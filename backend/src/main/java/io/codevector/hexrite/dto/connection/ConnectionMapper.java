@@ -8,8 +8,8 @@ import jakarta.inject.Singleton;
 @Singleton
 public class ConnectionMapper {
 
-  public ConnectionListResponse toConnectionListResponse(Connection connection) {
-    return new ConnectionListResponse(
+  public ConnectionResponse toConnectionResponse(Connection connection) {
+    return new ConnectionResponse(
         connection.id,
         connection.name,
         connection.description,

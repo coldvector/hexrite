@@ -1,6 +1,7 @@
 package io.codevector.hexrite.rest.ping;
 
 import io.codevector.hexrite.service.ping.PingService;
+import io.codevector.hexrite.utils.UniUtils;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -22,6 +23,6 @@ public class PingRest {
   @GET
   @Produces(MediaType.TEXT_PLAIN)
   public Uni<Response> greet() {
-    return this.service.ping();
+    return this.service.ping().onItem().transform(str -> UniUtils.handleSuccess(str));
   }
 }

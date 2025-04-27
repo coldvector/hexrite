@@ -3,6 +3,7 @@ package io.codevector.hexrite.rest.connection;
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
 import io.codevector.hexrite.service.connection.ConnectionService;
 import io.codevector.hexrite.service.connection.ConnectionServiceImpl;
+import io.codevector.hexrite.utils.UniUtils;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -29,21 +30,30 @@ public class ConnectionRest {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> listConnections() {
-    return this.connectionService.listConnections();
+    return this.connectionService
+        .listConnections()
+        .onItem()
+        .transform(list -> UniUtils.handleSuccess(list));
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
   public Uni<Response> getConnectionById(@PathParam("id") String connectionId) {
-    return this.connectionService.getConnectionById(connectionId);
+    return this.connectionService
+        .getConnectionById(connectionId)
+        .onItem()
+        .transform(UniUtils::handleSuccess);
   }
 
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public Uni<Response> createConnection(ConnectionRequest request) {
-    return this.connectionService.createConnection(request);
+    return this.connectionService
+        .createConnection(request)
+        .onItem()
+        .transform(UniUtils::handleSuccess);
   }
 
   @PUT
@@ -52,12 +62,18 @@ public class ConnectionRest {
   @Path("/{id}")
   public Uni<Response> updateConnection(
       @PathParam("id") String connectionId, ConnectionRequest request) {
-    return this.connectionService.updateConnection(connectionId, request);
+    return this.connectionService
+        .updateConnection(connectionId, request)
+        .onItem()
+        .transform(UniUtils::handleSuccess);
   }
 
   @DELETE
   @Path("/{id}")
   public Uni<Response> removeConnection(@PathParam("id") String connectionId) {
-    return this.connectionService.removeConnection(connectionId);
+    return this.connectionService
+        .removeConnection(connectionId)
+        .onItem()
+        .transform(UniUtils::handleSuccess);
   }
 }

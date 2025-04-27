@@ -1,6 +1,6 @@
 package io.codevector.hexrite.utils;
 
-import io.codevector.hexrite.models.ErrorBody;
+import io.codevector.hexrite.dto.error.ErrorResponse;
 import io.vertx.core.json.JsonObject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.WebApplicationException;
@@ -52,33 +52,7 @@ public class UniUtils {
     return Response.ok().entity(obj).build();
   }
 
-  public static Throwable handleFailure(Logger LOG, Throwable t, Status status, String message) {
-    LOG.errorf(t, "handleFailure: message=\"%s\", reason=\"%s\"", message, t.getLocalizedMessage());
-    return new WebApplicationException(createErrorResponse(status, message));
-  }
-
-  public static Throwable handleFailure(Logger LOG, Status status, String message) {
-    LOG.errorf("handleFailure: message=\"%s\"", message);
-    return new WebApplicationException(createErrorResponse(status, message));
-  }
-
-  public static Throwable handleFailure(Logger LOG, Throwable t, String message) {
-    LOG.errorf(t, "handleFailure: message=\"%s\", reason=\"%s\"", message, t.getLocalizedMessage());
-    return new WebApplicationException(createErrorResponse(message));
-  }
-
-  public static Throwable handleFailure(Logger LOG, String message) {
-    LOG.errorf("handleFailure: message=\"%s\"", message);
-    return new WebApplicationException(createErrorResponse(message));
-  }
-
   public static Response createErrorResponse(Status status, String message) {
-    return Response.status(status).entity(ErrorBody.create(status, message)).build();
-  }
-
-  public static Response createErrorResponse(String message) {
-    return Response.status(Status.SERVICE_UNAVAILABLE)
-        .entity(ErrorBody.create(Status.SERVICE_UNAVAILABLE, message))
-        .build();
+    return Response.status(status).entity(ErrorResponse.create(status, message)).build();
   }
 }

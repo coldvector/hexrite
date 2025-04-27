@@ -1,18 +1,20 @@
 package io.codevector.hexrite.service.connection;
 
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
+import io.codevector.hexrite.dto.connection.ConnectionResponse;
+import io.codevector.hexrite.entity.connection.Connection;
 import io.smallrye.mutiny.Uni;
-import jakarta.ws.rs.core.Response;
+import java.util.List;
 
 public interface ConnectionService {
 
-  public Uni<Response> listConnections();
+  public Uni<List<ConnectionResponse>> listConnections();
 
-  public Uni<Response> getConnectionById(String connectionId);
+  public Uni<Connection> getConnectionById(String connectionId);
 
-  public Uni<Response> createConnection(ConnectionRequest request);
+  public Uni<ConnectionResponse> createConnection(ConnectionRequest request);
 
-  public Uni<Response> updateConnection(String connectionId, ConnectionRequest request);
+  public Uni<ConnectionResponse> updateConnection(String connectionId, ConnectionRequest request);
 
-  public Uni<Response> removeConnection(String connectionId);
+  public Uni<Void> removeConnection(String connectionId);
 }
