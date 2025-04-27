@@ -16,7 +16,6 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.Instant;
-import java.util.UUID;
 import org.jboss.logging.Logger;
 
 @Entity
@@ -88,12 +87,12 @@ public class Connection extends PanacheEntityBase {
   public void prePersist() {
     this.createdAt = Instant.now();
     this.updatedAt = this.createdAt;
-    if (this.id == null) {
-      LOG.debugf("prePersist: generating new UUID for Connection");
-      this.id = UUID.randomUUID().toString();
-    } else {
-      LOG.debugf("prePersist: using existing UUID for Connection");
-    }
+    //    if (this.id == null) {
+    //      LOG.debugf("prePersist: generating new UUID for Connection");
+    //      this.id = UUID.randomUUID();
+    //    } else {
+    //      LOG.debugf("prePersist: using existing UUID for Connection");
+    //    }
   }
 
   @PreUpdate
