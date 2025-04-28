@@ -35,7 +35,7 @@ public class ExceptionMapper {
 
   @ServerExceptionMapper(Throwable.class)
   public Response handleGeneric(Throwable e) {
-    LOG.error("Unexpected error: ", e.getLocalizedMessage(), e);
+    LOG.error("Unexpected error: ", e);
     return createErrorResponse(Response.Status.SERVICE_UNAVAILABLE, e.getMessage());
   }
 
