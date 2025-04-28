@@ -19,7 +19,7 @@ public class OllamaResponseAdapter {
 
     return json.getJsonArray("models").stream()
         .map(JsonObject.class::cast)
-        .map(model -> parseModel(json))
+        .map(model -> parseModel(model))
         .collect(Collectors.toList());
   }
 
