@@ -1,4 +1,4 @@
-package io.codevector.hexrite.client;
+package io.codevector.hexrite.client.common;
 
 import io.codevector.hexrite.utils.JSONMapper;
 import io.codevector.hexrite.utils.UniUtils;

@@ -1,4 +1,4 @@
-package io.codevector.hexrite.client;
+package io.codevector.hexrite.client.common;
 
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.core.Response;
