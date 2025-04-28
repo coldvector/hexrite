@@ -13,11 +13,23 @@ public class UniUtils {
 
   public static Response handleResponse(Logger LOG, Response res) {
     LOG.debugf(
-        "handleResponse: status=\"%s\", headers=\"%s\", startBuffer=\"%b\", body=\"%s\"",
-        res.getStatus(),
-        res.getHeaders(),
-        res.bufferEntity(),
-        JSONMapper.serialize(res.readEntity(JsonObject.class)));
+        "handleResponse: status=\"%d\", statusInfo=\"%s\", headers=\"%s\", startBuffer=\"%b\"",
+        res.getStatus(), res.getStatusInfo().toEnum(), res.getHeaders(), res.bufferEntity());
+
+    try {
+      String body = res.readEntity(String.class);
+
+      if (body == null || body.isBlank()) {
+        // don't log empty body
+      } else if (body.trim().startsWith("{") || body.trim().startsWith("[")) {
+        JsonObject json = new JsonObject(body);
+        LOG.debugf("handleResponse: body=\"%s\"", json.encode());
+      } else {
+        LOG.debugf("handleResponse: body=\"%s\"", body);
+      }
+    } catch (Exception e) {
+      LOG.debugf("handleResponse: failed to read response body: \"%s\"", e.getMessage());
+    }
 
     if (res.getStatus() >= 200 && res.getStatus() < 400) {
       return res;
@@ -37,6 +49,7 @@ public class UniUtils {
       return new WebApplicationException(tw.getResponse());
     } else {
       LOG.errorf("handleFailure: error=\"%s\"", t.getLocalizedMessage());
+      LOG.error("handleFailure: error", t);
 
       return new WebApplicationException(
           createErrorResponse(Status.SERVICE_UNAVAILABLE, t.getLocalizedMessage()));
