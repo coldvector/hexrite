@@ -1,4 +1,4 @@
-package io.codevector.hexrite.models.connection;
+package io.codevector.hexrite.dto.connection;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 

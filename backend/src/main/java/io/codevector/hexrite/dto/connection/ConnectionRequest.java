@@ -1,7 +1,6 @@
 package io.codevector.hexrite.dto.connection;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.codevector.hexrite.models.connection.ConnectionType;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.net.URI;
 
