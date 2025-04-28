@@ -3,9 +3,11 @@ package io.codevector.hexrite.entity.connection;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
+import io.codevector.hexrite.entity.common.UriConverter;
 import io.codevector.hexrite.models.connection.ConnectionType;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import java.net.URI;
 import java.time.Instant;
 import org.jboss.logging.Logger;
 
@@ -43,8 +46,9 @@ public class Connection extends PanacheEntityBase {
   public ConnectionType type;
 
   @Column(name = "base_url")
+  @Convert(converter = UriConverter.class)
   @JsonProperty("baseUrl")
-  public String baseUrl;
+  public URI baseUrl;
 
   @Column(name = "api_key")
   @JsonProperty("apiKey")
@@ -69,7 +73,7 @@ public class Connection extends PanacheEntityBase {
     this.name = request.name();
     this.description = request.description();
     this.type = request.type();
-    this.baseUrl = request.baseUrl().toString();
+    this.baseUrl = request.baseUrl();
     this.apiKey = request.apiKey();
   }
 
@@ -77,7 +81,7 @@ public class Connection extends PanacheEntityBase {
     this.name = updateRequest.name();
     this.description = updateRequest.description();
     this.type = updateRequest.type();
-    this.baseUrl = updateRequest.baseUrl().toString();
+    this.baseUrl = updateRequest.baseUrl();
     this.apiKey = updateRequest.apiKey();
     this.isEnabled = updateRequest.isEnabled();
     return this;
@@ -87,12 +91,6 @@ public class Connection extends PanacheEntityBase {
   public void prePersist() {
     this.createdAt = Instant.now();
     this.updatedAt = this.createdAt;
-    //    if (this.id == null) {
-    //      LOG.debugf("prePersist: generating new UUID for Connection");
-    //      this.id = UUID.randomUUID();
-    //    } else {
-    //      LOG.debugf("prePersist: using existing UUID for Connection");
-    //    }
   }
 
   @PreUpdate
