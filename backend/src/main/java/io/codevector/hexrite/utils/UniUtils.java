@@ -53,6 +53,6 @@ public class UniUtils {
   }
 
   public static Response createErrorResponse(Status status, String message) {
-    return Response.status(status).entity(ErrorResponse.create(status, message)).build();
+    return Response.status(status).entity(ErrorResponse.create(message)).build();
   }
 }

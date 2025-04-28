@@ -33,6 +33,6 @@ public class ExceptionMapper {
   }
 
   private static Response createErrorResponse(Response.Status status, String message) {
-    return Response.status(status).entity(ErrorResponse.create(status, message)).build();
+    return Response.status(status).entity(ErrorResponse.create(message)).build();
   }
 }
