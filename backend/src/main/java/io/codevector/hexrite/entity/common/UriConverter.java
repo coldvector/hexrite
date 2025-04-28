@@ -14,6 +14,6 @@ public class UriConverter implements AttributeConverter<URI, String> {
 
   @Override
   public URI convertToEntityAttribute(String dbData) {
-    return URI.create("");
+    return URI.create(dbData);
   }
 }
