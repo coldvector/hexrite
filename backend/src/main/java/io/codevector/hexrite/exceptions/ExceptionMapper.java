@@ -1,6 +1,8 @@
 package io.codevector.hexrite.exceptions;
 
 import io.codevector.hexrite.dto.error.ErrorResponse;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotAllowedException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import org.jboss.logging.Logger;
@@ -21,14 +23,19 @@ public class ExceptionMapper {
     return createErrorResponse(Response.Status.CONFLICT, e.getMessage());
   }
 
-  @ServerExceptionMapper(IllegalArgumentException.class)
-  public Response handleBadRequest(IllegalArgumentException e) {
+  @ServerExceptionMapper({IllegalArgumentException.class, BadRequestException.class})
+  public Response handleBadRequest(Throwable e) {
     return createErrorResponse(Response.Status.BAD_REQUEST, e.getMessage());
+  }
+
+  @ServerExceptionMapper(NotAllowedException.class)
+  public Response handleMethodNotAllowed(NotAllowedException e) {
+    return createErrorResponse(Response.Status.METHOD_NOT_ALLOWED, e.getMessage());
   }
 
   @ServerExceptionMapper(Throwable.class)
   public Response handleGeneric(Throwable e) {
-    LOG.error("Unexpected error", e);
+    LOG.error("Unexpected error: ", e.getLocalizedMessage(), e);
     return createErrorResponse(Response.Status.SERVICE_UNAVAILABLE, e.getMessage());
   }
 
