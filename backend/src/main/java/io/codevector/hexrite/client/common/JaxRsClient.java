@@ -10,6 +10,7 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.CompletionStageRxInvoker;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Response;
+import java.net.URI;
 import java.time.Duration;
 import java.util.Map;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -30,7 +31,7 @@ public class JaxRsClient implements RestClient {
   }
 
   @Override
-  public Uni<Response> getRequest(String uri, Map<String, String> headers) {
+  public Uni<Response> getRequest(URI uri, Map<String, String> headers) {
     LOG.debugf("getRequest: uri=\"%s\"", uri);
 
     CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
@@ -47,7 +48,7 @@ public class JaxRsClient implements RestClient {
   }
 
   @Override
-  public Uni<Response> postRequest(String uri, Map<String, String> headers, Object payload) {
+  public Uni<Response> postRequest(URI uri, Map<String, String> headers, Object payload) {
     LOG.debugf("postRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
     CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
@@ -64,7 +65,7 @@ public class JaxRsClient implements RestClient {
   }
 
   @Override
-  public Uni<Response> putRequest(String uri, Map<String, String> headers, Object payload) {
+  public Uni<Response> putRequest(URI uri, Map<String, String> headers, Object payload) {
     LOG.debugf("putRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
     CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
@@ -81,7 +82,7 @@ public class JaxRsClient implements RestClient {
   }
 
   @Override
-  public Uni<Response> patchRequest(String uri, Map<String, String> headers, Object payload) {
+  public Uni<Response> patchRequest(URI uri, Map<String, String> headers, Object payload) {
     LOG.debugf("patchRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
     CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
@@ -98,7 +99,7 @@ public class JaxRsClient implements RestClient {
   }
 
   @Override
-  public Uni<Response> deleteRequest(String uri, Map<String, String> headers) {
+  public Uni<Response> deleteRequest(URI uri, Map<String, String> headers) {
     LOG.debugf("deleteRequest: uri=\"%s\"", uri);
 
     CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
