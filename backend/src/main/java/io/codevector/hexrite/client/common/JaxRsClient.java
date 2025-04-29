@@ -5,6 +5,7 @@ import io.codevector.hexrite.utils.UniUtils;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.CompletionStageRxInvoker;
@@ -35,70 +36,70 @@ public class JaxRsClient implements RestClient {
   public Uni<Response> getRequest(URI uri, Map<String, String> headers) {
     LOG.debugf("getRequest: uri=\"%s\"", uri);
 
-    return sendRequest("GET", uri, headers, null);
+    return sendRequest(HttpMethod.GET, uri, headers, null);
   }
 
   @Override
   public Uni<Response> getRequest(URI uri, Map<String, String> headers, Object payload) {
     LOG.debugf("getRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
-    return sendRequest("GET", uri, headers, payload);
+    return sendRequest(HttpMethod.GET, uri, headers, payload);
   }
 
   @Override
   public Uni<Response> postRequest(URI uri, Map<String, String> headers) {
     LOG.debugf("postRequest: uri=\"%s\"", uri);
 
-    return sendRequest("POST", uri, headers, null);
+    return sendRequest(HttpMethod.POST, uri, headers, null);
   }
 
   @Override
   public Uni<Response> postRequest(URI uri, Map<String, String> headers, Object payload) {
     LOG.debugf("postRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
-    return sendRequest("POST", uri, headers, payload);
+    return sendRequest(HttpMethod.POST, uri, headers, payload);
   }
 
   @Override
   public Uni<Response> putRequest(URI uri, Map<String, String> headers) {
     LOG.debugf("putRequest: uri=\"%s\"", uri);
 
-    return sendRequest("PUT", uri, headers, null);
+    return sendRequest(HttpMethod.PUT, uri, headers, null);
   }
 
   @Override
   public Uni<Response> putRequest(URI uri, Map<String, String> headers, Object payload) {
     LOG.debugf("putRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
-    return sendRequest("PUT", uri, headers, payload);
+    return sendRequest(HttpMethod.PUT, uri, headers, payload);
   }
 
   @Override
   public Uni<Response> patchRequest(URI uri, Map<String, String> headers) {
     LOG.debugf("patchRequest: uri=\"%s\"", uri);
 
-    return sendRequest("PATCH", uri, headers, null);
+    return sendRequest(HttpMethod.PATCH, uri, headers, null);
   }
 
   @Override
   public Uni<Response> patchRequest(URI uri, Map<String, String> headers, Object payload) {
     LOG.debugf("patchRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
-    return sendRequest("PATCH", uri, headers, payload);
+    return sendRequest(HttpMethod.PATCH, uri, headers, payload);
   }
 
   @Override
   public Uni<Response> deleteRequest(URI uri, Map<String, String> headers) {
     LOG.debugf("deleteRequest: uri=\"%s\"", uri);
 
-    return sendRequest("DELETE", uri, headers, null);
+    return sendRequest(HttpMethod.DELETE, uri, headers, null);
   }
 
   @Override
   public Uni<Response> deleteRequest(URI uri, Map<String, String> headers, Object payload) {
     LOG.debugf("deleteRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
-    return sendRequest("DELETE", uri, headers, payload);
+    return sendRequest(HttpMethod.DELETE, uri, headers, payload);
   }
 
   private Uni<Response> sendRequest(
