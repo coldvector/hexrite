@@ -9,6 +9,7 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.CompletionStageRxInvoker;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.core.Response;
 import java.net.URI;
 import java.time.Duration;
@@ -34,16 +35,44 @@ public class JaxRsClient implements RestClient {
   public Uni<Response> getRequest(URI uri, Map<String, String> headers) {
     LOG.debugf("getRequest: uri=\"%s\"", uri);
 
-    CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
-
     return Uni.createFrom()
-        .completionStage(invoker.get())
+        .completionStage(createRxInvoker(uri, headers).method("GET"))
         .onItem()
         .transform(r -> UniUtils.handleResponse(LOG, r))
         .onFailure()
         .transform(t -> UniUtils.handleFailure(LOG, t))
         .ifNoItem()
-        .after(this.timeout)
+        .after(timeout)
+        .failWith(() -> UniUtils.handleTimeout());
+  }
+
+  @Override
+  public Uni<Response> getRequest(URI uri, Map<String, String> headers, Object payload) {
+    LOG.debugf("getRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
+
+    return Uni.createFrom()
+        .completionStage(createRxInvoker(uri, headers).method("GET", Entity.json(payload)))
+        .onItem()
+        .transform(r -> UniUtils.handleResponse(LOG, r))
+        .onFailure()
+        .transform(t -> UniUtils.handleFailure(LOG, t))
+        .ifNoItem()
+        .after(timeout)
+        .failWith(() -> UniUtils.handleTimeout());
+  }
+
+  @Override
+  public Uni<Response> postRequest(URI uri, Map<String, String> headers) {
+    LOG.debugf("postRequest: uri=\"%s\"", uri);
+
+    return Uni.createFrom()
+        .completionStage(createRxInvoker(uri, headers).method("POST"))
+        .onItem()
+        .transform(r -> UniUtils.handleResponse(LOG, r))
+        .onFailure()
+        .transform(t -> UniUtils.handleFailure(LOG, t))
+        .ifNoItem()
+        .after(timeout)
         .failWith(() -> UniUtils.handleTimeout());
   }
 
@@ -51,16 +80,29 @@ public class JaxRsClient implements RestClient {
   public Uni<Response> postRequest(URI uri, Map<String, String> headers, Object payload) {
     LOG.debugf("postRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
-    CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
-
     return Uni.createFrom()
-        .completionStage(invoker.post(Entity.json(payload)))
+        .completionStage(createRxInvoker(uri, headers).method("POST", Entity.json(payload)))
         .onItem()
         .transform(r -> UniUtils.handleResponse(LOG, r))
         .onFailure()
         .transform(t -> UniUtils.handleFailure(LOG, t))
         .ifNoItem()
-        .after(this.timeout)
+        .after(timeout)
+        .failWith(() -> UniUtils.handleTimeout());
+  }
+
+  @Override
+  public Uni<Response> putRequest(URI uri, Map<String, String> headers) {
+    LOG.debugf("putRequest: uri=\"%s\"", uri);
+
+    return Uni.createFrom()
+        .completionStage(createRxInvoker(uri, headers).method("PUT"))
+        .onItem()
+        .transform(r -> UniUtils.handleResponse(LOG, r))
+        .onFailure()
+        .transform(t -> UniUtils.handleFailure(LOG, t))
+        .ifNoItem()
+        .after(timeout)
         .failWith(() -> UniUtils.handleTimeout());
   }
 
@@ -68,16 +110,29 @@ public class JaxRsClient implements RestClient {
   public Uni<Response> putRequest(URI uri, Map<String, String> headers, Object payload) {
     LOG.debugf("putRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
-    CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
-
     return Uni.createFrom()
-        .completionStage(invoker.put(Entity.json(payload)))
+        .completionStage(createRxInvoker(uri, headers).method("PUT", Entity.json(payload)))
         .onItem()
         .transform(r -> UniUtils.handleResponse(LOG, r))
         .onFailure()
         .transform(t -> UniUtils.handleFailure(LOG, t))
         .ifNoItem()
-        .after(this.timeout)
+        .after(timeout)
+        .failWith(() -> UniUtils.handleTimeout());
+  }
+
+  @Override
+  public Uni<Response> patchRequest(URI uri, Map<String, String> headers) {
+    LOG.debugf("patchRequest: uri=\"%s\"", uri);
+
+    return Uni.createFrom()
+        .completionStage(createRxInvoker(uri, headers).method("PATCH"))
+        .onItem()
+        .transform(r -> UniUtils.handleResponse(LOG, r))
+        .onFailure()
+        .transform(t -> UniUtils.handleFailure(LOG, t))
+        .ifNoItem()
+        .after(timeout)
         .failWith(() -> UniUtils.handleTimeout());
   }
 
@@ -85,16 +140,14 @@ public class JaxRsClient implements RestClient {
   public Uni<Response> patchRequest(URI uri, Map<String, String> headers, Object payload) {
     LOG.debugf("patchRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
 
-    CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
-
     return Uni.createFrom()
-        .completionStage(invoker.method("PATCH", Entity.json(payload)))
+        .completionStage(createRxInvoker(uri, headers).method("PATCH", Entity.json(payload)))
         .onItem()
         .transform(r -> UniUtils.handleResponse(LOG, r))
         .onFailure()
         .transform(t -> UniUtils.handleFailure(LOG, t))
         .ifNoItem()
-        .after(this.timeout)
+        .after(timeout)
         .failWith(() -> UniUtils.handleTimeout());
   }
 
@@ -102,16 +155,35 @@ public class JaxRsClient implements RestClient {
   public Uni<Response> deleteRequest(URI uri, Map<String, String> headers) {
     LOG.debugf("deleteRequest: uri=\"%s\"", uri);
 
-    CompletionStageRxInvoker invoker = this.client.target(uri).request().rx();
-
     return Uni.createFrom()
-        .completionStage(invoker.delete())
+        .completionStage(createRxInvoker(uri, headers).method("DELETE"))
         .onItem()
         .transform(r -> UniUtils.handleResponse(LOG, r))
         .onFailure()
         .transform(t -> UniUtils.handleFailure(LOG, t))
         .ifNoItem()
-        .after(this.timeout)
+        .after(timeout)
         .failWith(() -> UniUtils.handleTimeout());
+  }
+
+  @Override
+  public Uni<Response> deleteRequest(URI uri, Map<String, String> headers, Object payload) {
+    LOG.debugf("deleteRequest: uri=\"%s\", payload=\"%s\"", uri, JSONMapper.serialize(payload));
+
+    return Uni.createFrom()
+        .completionStage(createRxInvoker(uri, headers).method("DELETE", Entity.json(payload)))
+        .onItem()
+        .transform(r -> UniUtils.handleResponse(LOG, r))
+        .onFailure()
+        .transform(t -> UniUtils.handleFailure(LOG, t))
+        .ifNoItem()
+        .after(timeout)
+        .failWith(() -> UniUtils.handleTimeout());
+  }
+
+  private CompletionStageRxInvoker createRxInvoker(URI uri, Map<String, String> headers) {
+    Invocation.Builder request = client.target(uri).request();
+    headers.forEach((k, v) -> request.header(k, v));
+    return request.rx();
   }
 }
