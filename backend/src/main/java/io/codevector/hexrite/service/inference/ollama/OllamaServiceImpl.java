@@ -51,12 +51,30 @@ public class OllamaServiceImpl implements OllamaService {
                     URI.create(conn.baseUrl + "/api/pull"), model, streamResponse));
   }
 
+  public Uni<Void> deleteModel(String connectionId, String model) {
+    return connectionService
+        .getConnectionById(connectionId)
+        .chain(
+            conn ->
+                restClient.deleteModel(
+                    URI.create(conn.baseUrl + "/api/delete"), model, streamResponse));
+  }
+
   public Uni<Void> loadModel(String connectionId, String model) {
     return connectionService
         .getConnectionById(connectionId)
         .chain(
             conn ->
                 restClient.loadModel(
+                    URI.create(conn.baseUrl + "/api/generate"), model, streamResponse));
+  }
+
+  public Uni<Void> unloadModel(String connectionId, String model) {
+    return connectionService
+        .getConnectionById(connectionId)
+        .chain(
+            conn ->
+                restClient.unloadModel(
                     URI.create(conn.baseUrl + "/api/generate"), model, streamResponse));
   }
 

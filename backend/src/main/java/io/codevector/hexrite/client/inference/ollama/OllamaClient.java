@@ -56,9 +56,23 @@ public class OllamaClient {
         .transform(res -> res.readEntity(Void.class));
   }
 
+  public Uni<Void> deleteModel(URI uri, String model, boolean streamResponse) {
+    return restClient
+        .deleteRequest(uri, createHeaders(), payloadBuilder.createPayloadDeleteModel(model))
+        .onItem()
+        .transform(res -> res.readEntity(Void.class));
+  }
+
   public Uni<Void> loadModel(URI uri, String model, boolean streamResponse) {
     return restClient
         .postRequest(uri, createHeaders(), payloadBuilder.createPayloadLoadModel(model))
+        .onItem()
+        .transform(res -> res.readEntity(Void.class));
+  }
+
+  public Uni<Void> unloadModel(URI uri, String model, boolean streamResponse) {
+    return restClient
+        .postRequest(uri, createHeaders(), payloadBuilder.createPayloadUnloadModel(model))
         .onItem()
         .transform(res -> res.readEntity(Void.class));
   }

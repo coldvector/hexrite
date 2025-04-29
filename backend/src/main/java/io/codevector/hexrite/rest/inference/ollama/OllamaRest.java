@@ -24,7 +24,7 @@ public class OllamaRest {
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  // @Produces({MediaType.APPLICATION_JSON, "*/*;q=0"})
+  @Produces(MediaType.WILDCARD)
   public Uni<Response> ping(JsonObject payload) {
     return ollamaService
         .ping(payload.getString("connectionId"))
@@ -65,13 +65,35 @@ public class OllamaRest {
         .transform(UniUtils::handleSuccess);
   }
 
+  @Path("/delete")
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.WILDCARD)
+  public Uni<Response> deleteModel(JsonObject payload) {
+    return ollamaService
+        .deleteModel(payload.getString("connectionId"), payload.getString("model"))
+        .onItem()
+        .transform(UniUtils::handleSuccess);
+  }
+
   @Path("/load")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.WILDCARD)
   public Uni<Response> loadModel(JsonObject payload) {
     return ollamaService
         .loadModel(payload.getString("connectionId"), payload.getString("model"))
+        .onItem()
+        .transform(UniUtils::handleSuccess);
+  }
+
+  @Path("/unload")
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.WILDCARD)
+  public Uni<Response> unloadModel(JsonObject payload) {
+    return ollamaService
+        .unloadModel(payload.getString("connectionId"), payload.getString("model"))
         .onItem()
         .transform(UniUtils::handleSuccess);
   }

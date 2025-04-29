@@ -14,5 +14,9 @@ public interface OllamaService {
 
   public Uni<Void> pullModel(String connectionId, String model);
 
+  public Uni<Void> deleteModel(String connectionId, String model);
+
   public Uni<Void> loadModel(String connectionId, String model);
+
+  public Uni<Void> unloadModel(String connectionId, String model);
 }
