@@ -24,7 +24,6 @@ public class OllamaRest {
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.WILDCARD)
   public Uni<Response> ping(JsonObject payload) {
     return ollamaService
         .ping(payload.getString("connectionId"))
@@ -68,7 +67,6 @@ public class OllamaRest {
   @Path("/delete")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.WILDCARD)
   public Uni<Response> deleteModel(JsonObject payload) {
     return ollamaService
         .deleteModel(payload.getString("connectionId"), payload.getString("model"))

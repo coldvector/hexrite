@@ -53,28 +53,28 @@ public class OllamaClient {
         .postRequest(
             uri, createHeaders(), payloadBuilder.createPayloadPullModel(model, streamResponse))
         .onItem()
-        .transform(res -> res.readEntity(Void.class));
+        .transform(res -> null);
   }
 
   public Uni<Void> deleteModel(URI uri, String model, boolean streamResponse) {
     return restClient
         .deleteRequest(uri, createHeaders(), payloadBuilder.createPayloadDeleteModel(model))
         .onItem()
-        .transform(res -> res.readEntity(Void.class));
+        .transform(res -> null);
   }
 
   public Uni<Void> loadModel(URI uri, String model, boolean streamResponse) {
     return restClient
         .postRequest(uri, createHeaders(), payloadBuilder.createPayloadLoadModel(model))
         .onItem()
-        .transform(res -> res.readEntity(Void.class));
+        .transform(res -> null);
   }
 
   public Uni<Void> unloadModel(URI uri, String model, boolean streamResponse) {
     return restClient
         .postRequest(uri, createHeaders(), payloadBuilder.createPayloadUnloadModel(model))
         .onItem()
-        .transform(res -> res.readEntity(Void.class));
+        .transform(res -> null);
   }
 
   private Map<String, String> createHeadersJson() {
