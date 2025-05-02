@@ -12,6 +12,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.jboss.resteasy.reactive.RestStreamElementType;
 
 @Path("/v1/inference/ollama")
 public class OllamaRest {
@@ -57,7 +58,7 @@ public class OllamaRest {
   @Path("/pull")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.SERVER_SENT_EVENTS)
+  @RestStreamElementType(MediaType.APPLICATION_JSON)
   public Multi<JsonObject> pullModel(JsonObject payload) {
     return ollamaService.pullModel(payload.getString("connectionId"), payload.getString("model"));
   }

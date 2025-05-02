@@ -31,8 +31,8 @@ public interface OllamaClient {
 
   @POST
   @Path("/api/pull")
-  @RestStreamElementType(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
+  @RestStreamElementType(MediaType.APPLICATION_JSON)
   Multi<JsonObject> pullModel(JsonObject request);
 
   @DELETE
