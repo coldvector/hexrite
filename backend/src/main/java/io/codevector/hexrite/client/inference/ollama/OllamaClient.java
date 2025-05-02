@@ -1,91 +1,54 @@
 package io.codevector.hexrite.client.inference.ollama;
 
-import io.codevector.hexrite.client.common.RestClient;
-import io.codevector.hexrite.dto.inference.ollama.OllamaModel;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import io.vertx.core.json.JsonObject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
+import org.jboss.resteasy.reactive.RestStreamElementType;
 
-@ApplicationScoped
-public class OllamaClient {
+@Path("")
+public interface OllamaClient {
 
-  private final RestClient restClient;
-  private final OllamaResponseAdapter responseAdapter;
-  private final OllamaPayloadBuilder payloadBuilder;
+  @GET
+  @Produces(MediaType.TEXT_PLAIN)
+  Uni<String> ping();
 
-  @Inject
-  public OllamaClient(
-      RestClient restClient,
-      OllamaResponseAdapter responseAdapter,
-      OllamaPayloadBuilder payloadBuilder) {
-    this.restClient = restClient;
-    this.responseAdapter = responseAdapter;
-    this.payloadBuilder = payloadBuilder;
-  }
+  @GET
+  @Path("/api/tags")
+  @Produces(MediaType.APPLICATION_JSON)
+  Uni<JsonObject> listLocalModels();
 
-  public Uni<String> ping(URI uri) {
-    return restClient
-        .getRequest(uri, createHeadersText())
-        .onItem()
-        .transform(res -> res.readEntity(String.class));
-  }
+  @GET
+  @Path("/api/ps")
+  @Produces(MediaType.APPLICATION_JSON)
+  Uni<JsonObject> listRunningModels();
 
-  public Uni<List<OllamaModel>> listLocalModels(URI uri) {
-    return restClient
-        .getRequest(uri, createHeadersJson())
-        .onItem()
-        .transform(res -> responseAdapter.parseModelList(res));
-  }
+  @POST
+  @Path("/api/pull")
+  @RestStreamElementType(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  Multi<JsonObject> pullModel(JsonObject request);
 
-  public Uni<List<OllamaModel>> listRunningModels(URI uri) {
-    return restClient
-        .getRequest(uri, createHeadersJson())
-        .onItem()
-        .transform(res -> responseAdapter.parseModelList(res));
-  }
+  @DELETE
+  @Path("/api/delete")
+  @Consumes(MediaType.APPLICATION_JSON)
+  Uni<Void> deleteModel(JsonObject request);
 
-  public Uni<Void> pullModel(URI uri, String model, boolean streamResponse) {
-    return restClient
-        .postRequest(
-            uri, createHeaders(), payloadBuilder.createPayloadPullModel(model, streamResponse))
-        .onItem()
-        .transform(res -> null);
-  }
+  @POST
+  @Path("/api/generate")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  Uni<JsonObject> loadModel(JsonObject request);
 
-  public Uni<Void> deleteModel(URI uri, String model, boolean streamResponse) {
-    return restClient
-        .deleteRequest(uri, createHeaders(), payloadBuilder.createPayloadDeleteModel(model))
-        .onItem()
-        .transform(res -> null);
-  }
-
-  public Uni<Void> loadModel(URI uri, String model, boolean streamResponse) {
-    return restClient
-        .postRequest(uri, createHeaders(), payloadBuilder.createPayloadLoadModel(model))
-        .onItem()
-        .transform(res -> null);
-  }
-
-  public Uni<Void> unloadModel(URI uri, String model, boolean streamResponse) {
-    return restClient
-        .postRequest(uri, createHeaders(), payloadBuilder.createPayloadUnloadModel(model))
-        .onItem()
-        .transform(res -> null);
-  }
-
-  private Map<String, String> createHeadersJson() {
-    return Map.of("Accept", MediaType.APPLICATION_JSON);
-  }
-
-  private Map<String, String> createHeadersText() {
-    return Map.of("Accept", MediaType.TEXT_PLAIN);
-  }
-
-  private Map<String, String> createHeaders() {
-    return Map.of("Content-Type", MediaType.APPLICATION_JSON, "Accept", MediaType.APPLICATION_JSON);
-  }
+  @POST
+  @Path("/api/generate")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  Uni<JsonObject> unloadModel(JsonObject request);
 }

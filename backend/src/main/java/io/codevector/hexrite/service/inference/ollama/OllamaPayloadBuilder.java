@@ -1,4 +1,4 @@
-package io.codevector.hexrite.client.inference.ollama;
+package io.codevector.hexrite.service.inference.ollama;
 
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -6,8 +6,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class OllamaPayloadBuilder {
 
-  public JsonObject createPayloadPullModel(String model, boolean streamResponse) {
-    return new JsonObject().put("model", model).put("stream", streamResponse);
+  public JsonObject createPayloadPullModel(String model) {
+    return new JsonObject().put("model", model).put("stream", true);
   }
 
   public JsonObject createPayloadDeleteModel(String model) {

@@ -2,6 +2,7 @@ package io.codevector.hexrite.rest.inference.ollama;
 
 import io.codevector.hexrite.service.inference.ollama.OllamaService;
 import io.codevector.hexrite.utils.UniUtils;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
 import jakarta.inject.Inject;
@@ -56,12 +57,9 @@ public class OllamaRest {
   @Path("/pull")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  public Uni<Response> pullModel(JsonObject payload) {
-    return ollamaService
-        .pullModel(payload.getString("connectionId"), payload.getString("model"))
-        .onItem()
-        .transform(UniUtils::handleSuccess);
+  @Produces(MediaType.SERVER_SENT_EVENTS)
+  public Multi<JsonObject> pullModel(JsonObject payload) {
+    return ollamaService.pullModel(payload.getString("connectionId"), payload.getString("model"));
   }
 
   @Path("/delete")

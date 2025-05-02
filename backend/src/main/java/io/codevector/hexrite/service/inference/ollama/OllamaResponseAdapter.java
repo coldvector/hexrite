@@ -1,9 +1,8 @@
-package io.codevector.hexrite.client.inference.ollama;
+package io.codevector.hexrite.service.inference.ollama;
 
 import io.codevector.hexrite.dto.inference.ollama.OllamaModel;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,8 +10,7 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class OllamaResponseAdapter {
 
-  List<OllamaModel> parseModelList(Response res) {
-    JsonObject json = res.readEntity(JsonObject.class);
+  List<OllamaModel> parseModelList(JsonObject json) {
     if (json == null || json.isEmpty()) {
       return new ArrayList<>();
     }

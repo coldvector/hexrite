@@ -3,6 +3,7 @@ package io.codevector.hexrite.exceptions;
 import io.codevector.hexrite.dto.error.ErrorResponse;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotAllowedException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import org.jboss.logging.Logger;
@@ -23,7 +24,11 @@ public class ExceptionMapper {
     return createErrorResponse(Response.Status.CONFLICT, e.getMessage());
   }
 
-  @ServerExceptionMapper({IllegalArgumentException.class, BadRequestException.class})
+  @ServerExceptionMapper({
+    IllegalArgumentException.class,
+    BadRequestException.class,
+    NotFoundException.class
+  })
   public Response handleBadRequest(Throwable e) {
     return createErrorResponse(Response.Status.BAD_REQUEST, e.getMessage());
   }

@@ -1,98 +1,101 @@
 package io.codevector.hexrite.service.inference.ollama;
 
 import io.codevector.hexrite.client.inference.ollama.OllamaClient;
+import io.codevector.hexrite.client.inference.ollama.OllamaClientFactory;
 import io.codevector.hexrite.dto.inference.ollama.OllamaModel;
 import io.codevector.hexrite.service.connection.ConnectionService;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class OllamaServiceImpl implements OllamaService {
 
-  private final OllamaClient restClient;
+  private static final Logger LOG = Logger.getLogger(OllamaService.class);
+
   private final ConnectionService connectionService;
-  private final boolean streamResponse = false;
+  private final OllamaClientFactory clientFactory;
+  private final OllamaPayloadBuilder payloadBuilder;
+  private final OllamaResponseAdapter responseAdapter;
 
   @Inject
-  public OllamaServiceImpl(OllamaClient restClient, ConnectionService connectionService) {
-    this.restClient = restClient;
+  public OllamaServiceImpl(
+      ConnectionService connectionService,
+      OllamaClientFactory clientFactory,
+      OllamaPayloadBuilder payloadBuilder,
+      OllamaResponseAdapter responseAdapter) {
     this.connectionService = connectionService;
+    this.clientFactory = clientFactory;
+    this.payloadBuilder = payloadBuilder;
+    this.responseAdapter = responseAdapter;
   }
 
+  @Override
   public Uni<String> ping(String connectionId) {
-    return connectionService
-        .getConnectionById(connectionId)
-        .chain(conn -> restClient.ping(conn.baseUrl));
+    LOG.infof("ping: \"%s\"", connectionId);
+    return getOllamaClient(connectionId).chain(client -> client.ping());
   }
 
+  @Override
   public Uni<List<OllamaModel>> listLocalModels(String connectionId) {
-    return connectionService
-        .getConnectionById(connectionId)
-        .chain(conn -> restClient.listLocalModels(URI.create(conn.baseUrl + "/api/tags")));
+    LOG.infof("listLocalModels: \"%s\"", connectionId);
+    return getOllamaClient(connectionId)
+        .chain(client -> client.listLocalModels())
+        .onItem()
+        .transform(modelList -> responseAdapter.parseModelList(modelList));
   }
 
+  @Override
   public Uni<List<OllamaModel>> listRunningModels(String connectionId) {
-    return connectionService
-        .getConnectionById(connectionId)
-        .chain(conn -> restClient.listRunningModels(URI.create(conn.baseUrl + "/api/ps")));
+    LOG.infof("listRunningModels: \"%s\"", connectionId);
+    return getOllamaClient(connectionId)
+        .chain(client -> client.listRunningModels())
+        .onItem()
+        .transform(modelList -> responseAdapter.parseModelList(modelList));
   }
 
-  public Uni<Void> pullModel(String connectionId, String model) {
-    return connectionService
-        .getConnectionById(connectionId)
-        .chain(
-            conn ->
-                restClient.pullModel(
-                    URI.create(conn.baseUrl + "/api/pull"), model, streamResponse));
+  @Override
+  public Multi<JsonObject> pullModel(String connectionId, String model) {
+    LOG.infof("pullModel: \"%s\"", connectionId);
+    return getOllamaClient(connectionId)
+        .onItem()
+        .transformToMulti(client -> client.pullModel(payloadBuilder.createPayloadPullModel(model)));
   }
 
+  @Override
   public Uni<Void> deleteModel(String connectionId, String model) {
-    return connectionService
-        .getConnectionById(connectionId)
-        .chain(
-            conn ->
-                restClient.deleteModel(
-                    URI.create(conn.baseUrl + "/api/delete"), model, streamResponse));
+    LOG.infof("deleteModel: \"%s\"", connectionId);
+    return getOllamaClient(connectionId)
+        .chain(client -> client.deleteModel(payloadBuilder.createPayloadDeleteModel(model)));
   }
 
+  @Override
   public Uni<Void> loadModel(String connectionId, String model) {
-    return connectionService
-        .getConnectionById(connectionId)
-        .chain(
-            conn ->
-                restClient.loadModel(
-                    URI.create(conn.baseUrl + "/api/generate"), model, streamResponse));
+    LOG.infof("loadModel: \"%s\"", connectionId);
+    return getOllamaClient(connectionId)
+        .chain(client -> client.loadModel(payloadBuilder.createPayloadLoadModel(model)))
+        .onItem()
+        .transform(j -> null);
   }
 
+  @Override
   public Uni<Void> unloadModel(String connectionId, String model) {
-    return connectionService
-        .getConnectionById(connectionId)
-        .chain(
-            conn ->
-                restClient.unloadModel(
-                    URI.create(conn.baseUrl + "/api/generate"), model, streamResponse));
+    LOG.infof("unloadModel: \"%s\"", connectionId);
+    return getOllamaClient(connectionId)
+        .chain(client -> client.unloadModel(payloadBuilder.createPayloadUnloadModel(model)))
+        .onItem()
+        .transform(j -> null);
   }
 
-  private URI createURL(URI baseUrl, String... path) {
-    if (baseUrl == null || path == null || path.length == 0) {
-      return baseUrl;
-    }
-
-    String basePath = baseUrl.toString();
-    if (!basePath.endsWith("/")) {
-      basePath += "/";
-    }
-
-    String finalPath =
-        Arrays.stream(path)
-            .map(p -> p.startsWith("/") ? p.substring(1) : p) // Strip leading slashes
-            .collect(Collectors.joining("/"));
-
-    return URI.create(basePath + finalPath);
+  private Uni<OllamaClient> getOllamaClient(String connectionId) {
+    return connectionService
+        .getConnectionById(connectionId)
+        .onItem()
+        .transform(
+            connection -> clientFactory.getClient(connectionId, connection.baseUrl.toString()));
   }
 }

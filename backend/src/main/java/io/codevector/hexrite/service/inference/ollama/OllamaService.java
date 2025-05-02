@@ -1,7 +1,9 @@
 package io.codevector.hexrite.service.inference.ollama;
 
 import io.codevector.hexrite.dto.inference.ollama.OllamaModel;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.json.JsonObject;
 import java.util.List;
 
 public interface OllamaService {
@@ -12,7 +14,7 @@ public interface OllamaService {
 
   public Uni<List<OllamaModel>> listRunningModels(String connectionId);
 
-  public Uni<Void> pullModel(String connectionId, String model);
+  public Multi<JsonObject> pullModel(String connectionId, String model);
 
   public Uni<Void> deleteModel(String connectionId, String model);
 
