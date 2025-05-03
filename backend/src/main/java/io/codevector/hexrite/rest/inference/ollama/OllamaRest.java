@@ -76,7 +76,6 @@ public class OllamaRest {
   @Path("/load")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.WILDCARD)
   public Uni<Response> loadModel(JsonObject payload) {
     return ollamaService
         .loadModel(payload.getString("connectionId"), payload.getString("model"))
@@ -87,7 +86,6 @@ public class OllamaRest {
   @Path("/unload")
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.WILDCARD)
   public Uni<Response> unloadModel(JsonObject payload) {
     return ollamaService
         .unloadModel(payload.getString("connectionId"), payload.getString("model"))
