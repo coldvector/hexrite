@@ -3,12 +3,15 @@ package io.codevector.hexrite.rest.common;
 import io.codevector.hexrite.dto.error.ErrorResponse;
 import io.codevector.hexrite.exceptions.ConflictException;
 import io.codevector.hexrite.exceptions.ResourceNotFoundException;
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotAllowedException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 
 @Provider
@@ -38,6 +41,22 @@ public class ExceptionMapper {
   @ServerExceptionMapper(NotAllowedException.class)
   public Response handleMethodNotAllowed(NotAllowedException e) {
     return createErrorResponse(Response.Status.METHOD_NOT_ALLOWED, e.getMessage());
+  }
+
+  @ServerExceptionMapper(ClientWebApplicationException.class)
+  public Response handleClientWebAppliationException(ClientWebApplicationException e) {
+    int status = e.getResponse().getStatus();
+    String raw = e.getResponse().readEntity(String.class);
+
+    String message;
+    try {
+      JsonObject json = Json.decodeValue(raw, JsonObject.class);
+      message = json.getString("error", raw);
+    } catch (Exception ex) {
+      System.out.println("In catch");
+      message = raw;
+    }
+    return createErrorResponse(Response.Status.fromStatusCode(status), message);
   }
 
   @ServerExceptionMapper(Throwable.class)
