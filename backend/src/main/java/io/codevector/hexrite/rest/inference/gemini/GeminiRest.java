@@ -2,6 +2,7 @@ package io.codevector.hexrite.rest.inference.gemini;
 
 import io.codevector.hexrite.rest.common.ResponseUtils;
 import io.codevector.hexrite.service.inference.gemini.GeminiService;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
 import jakarta.inject.Inject;
@@ -11,6 +12,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.jboss.resteasy.reactive.RestStreamElementType;
 
 @Path("/v1/inference/gemini")
 public class GeminiRest {
@@ -28,10 +30,18 @@ public class GeminiRest {
   @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> listLocalModels(JsonObject payload) {
     return geminiService
-      .listModels(payload.getString("connectionId"))
-      .onItem()
-      .transform(ResponseUtils::handleSuccess);
+        .listModels(payload.getString("connectionId"))
+        .onItem()
+        .transform(ResponseUtils::handleSuccess);
   }
 
-
+  @Path("/generate")
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.SERVER_SENT_EVENTS)
+  @RestStreamElementType(MediaType.TEXT_PLAIN)
+  public Multi<JsonObject> generateCompletion(JsonObject payload) {
+    return geminiService.generateContent(
+        payload.getString("connectionId"), payload.getString("model"), payload.getString("prompt"));
+  }
 }

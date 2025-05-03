@@ -4,7 +4,9 @@ import io.codevector.hexrite.client.inference.gemini.GeminiClient;
 import io.codevector.hexrite.client.inference.gemini.GeminiClientFactory;
 import io.codevector.hexrite.dto.inference.gemini.GeminiModel;
 import io.codevector.hexrite.service.connection.ConnectionService;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -39,6 +41,16 @@ public class GeminiServiceImpl implements GeminiService {
         .chain(client -> client.listModels())
         .onItem()
         .transform(modelList -> responseAdapter.parseModelList(modelList));
+  }
+
+  @Override
+  public Multi<JsonObject> generateContent(String connectionId, String model, String prompt) {
+    LOG.infof("generateCompletion: \"%s\", \"%s\"", connectionId, model);
+    return getGeminiClient(connectionId)
+        .onItem()
+        .transformToMulti(
+            client ->
+                client.generateContent(model, payloadBuilder.createPayloadGenerateContent(prompt)));
   }
 
   private Uni<GeminiClient> getGeminiClient(String connectionId) {
