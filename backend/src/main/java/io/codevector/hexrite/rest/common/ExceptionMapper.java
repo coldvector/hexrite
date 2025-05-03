@@ -45,15 +45,26 @@ public class ExceptionMapper {
 
   @ServerExceptionMapper(ClientWebApplicationException.class)
   public Response handleClientWebAppliationException(ClientWebApplicationException e) {
+    LOG.error("handleClientWebAppliationException: ", e);
     int status = e.getResponse().getStatus();
     String raw = e.getResponse().readEntity(String.class);
 
     String message;
     try {
       JsonObject json = Json.decodeValue(raw, JsonObject.class);
-      message = json.getString("error", raw);
+
+      if (json.containsKey("error")) {
+        try {
+          message = json.getJsonObject("error").getString("message");
+        } catch (Exception ex) {
+          message = json.getString("error");
+        }
+      } else if (json.containsKey("message")) {
+        message = json.getString("message");
+      } else {
+        message = raw;
+      }
     } catch (Exception ex) {
-      System.out.println("In catch");
       message = raw;
     }
     return createErrorResponse(Response.Status.fromStatusCode(status), message);
