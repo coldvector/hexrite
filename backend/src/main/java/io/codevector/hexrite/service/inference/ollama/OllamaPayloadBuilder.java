@@ -21,4 +21,8 @@ public class OllamaPayloadBuilder {
   public JsonObject createPayloadUnloadModel(String model) {
     return new JsonObject().put("model", model).put("keep_alive", 0);
   }
+
+  public JsonObject createPayloadGenerateCompletion(String model, String prompt) {
+    return new JsonObject().put("model", model).put("prompt", prompt);
+  }
 }

@@ -91,6 +91,17 @@ public class OllamaServiceImpl implements OllamaService {
         .transform(j -> null);
   }
 
+  @Override
+  public Multi<String> generateCompletion(String connectionId, String model, String prompt) {
+    LOG.infof("generateCompletion: \"%s\"", connectionId);
+    return getOllamaClient(connectionId)
+        .onItem()
+        .transformToMulti(
+            client ->
+                client.generateCompletion(
+                    payloadBuilder.createPayloadGenerateCompletion(model, prompt)));
+  }
+
   private Uni<OllamaClient> getOllamaClient(String connectionId) {
     return connectionService
         .getConnectionById(connectionId)

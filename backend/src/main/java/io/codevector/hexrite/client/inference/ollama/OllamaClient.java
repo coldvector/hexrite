@@ -15,6 +15,8 @@ import org.jboss.resteasy.reactive.RestStreamElementType;
 @Path("")
 public interface OllamaClient {
 
+  String ND_JSON = "application/x-ndjson";
+
   @GET
   @Produces(MediaType.TEXT_PLAIN)
   Uni<String> ping();
@@ -51,4 +53,10 @@ public interface OllamaClient {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   Uni<JsonObject> unloadModel(JsonObject request);
+
+  @POST
+  @Path("/api/generate")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(ND_JSON)
+  Multi<String> generateCompletion(JsonObject request);
 }

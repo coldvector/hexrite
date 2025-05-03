@@ -21,4 +21,6 @@ public interface OllamaService {
   public Uni<Void> loadModel(String connectionId, String model);
 
   public Uni<Void> unloadModel(String connectionId, String model);
+
+  public Multi<String> generateCompletion(String connectionId, String model, String prompt);
 }
