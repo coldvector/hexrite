@@ -23,7 +23,7 @@ public class GeminiResponseAdapter {
 
   private GeminiModel parseModel(JsonObject json) {
     return new GeminiModel(
-        json.getString("name", ""),
+        json.getString("name", "").replaceFirst("^models/", ""),
         json.getString("displayName", ""),
         json.getString("description", ""),
         json.getLong("inputTokenLimit", 0L),
