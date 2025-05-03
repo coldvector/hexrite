@@ -1,6 +1,8 @@
-package io.codevector.hexrite.exceptions;
+package io.codevector.hexrite.rest.common;
 
 import io.codevector.hexrite.dto.error.ErrorResponse;
+import io.codevector.hexrite.exceptions.ConflictException;
+import io.codevector.hexrite.exceptions.ResourceNotFoundException;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotAllowedException;
 import jakarta.ws.rs.NotFoundException;

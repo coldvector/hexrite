@@ -1,7 +1,7 @@
 package io.codevector.hexrite.rest.inference.ollama;
 
+import io.codevector.hexrite.rest.common.ResponseUtils;
 import io.codevector.hexrite.service.inference.ollama.OllamaService;
-import io.codevector.hexrite.utils.UniUtils;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
@@ -30,7 +30,7 @@ public class OllamaRest {
     return ollamaService
         .ping(payload.getString("connectionId"))
         .onItem()
-        .transform(UniUtils::handleSuccess);
+        .transform(ResponseUtils::handleSuccess);
   }
 
   @Path("/list")
@@ -41,7 +41,7 @@ public class OllamaRest {
     return ollamaService
         .listLocalModels(payload.getString("connectionId"))
         .onItem()
-        .transform(UniUtils::handleSuccess);
+        .transform(ResponseUtils::handleSuccess);
   }
 
   @Path("/ps")
@@ -52,7 +52,7 @@ public class OllamaRest {
     return ollamaService
         .listRunningModels(payload.getString("connectionId"))
         .onItem()
-        .transform(UniUtils::handleSuccess);
+        .transform(ResponseUtils::handleSuccess);
   }
 
   @Path("/pull")
@@ -70,7 +70,7 @@ public class OllamaRest {
     return ollamaService
         .deleteModel(payload.getString("connectionId"), payload.getString("model"))
         .onItem()
-        .transform(UniUtils::handleSuccess);
+        .transform(ResponseUtils::handleSuccess);
   }
 
   @Path("/load")
@@ -81,7 +81,7 @@ public class OllamaRest {
     return ollamaService
         .loadModel(payload.getString("connectionId"), payload.getString("model"))
         .onItem()
-        .transform(UniUtils::handleSuccess);
+        .transform(ResponseUtils::handleSuccess);
   }
 
   @Path("/unload")
@@ -92,6 +92,6 @@ public class OllamaRest {
     return ollamaService
         .unloadModel(payload.getString("connectionId"), payload.getString("model"))
         .onItem()
-        .transform(UniUtils::handleSuccess);
+        .transform(ResponseUtils::handleSuccess);
   }
 }

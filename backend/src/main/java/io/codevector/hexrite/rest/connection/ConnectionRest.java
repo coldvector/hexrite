@@ -1,9 +1,9 @@
 package io.codevector.hexrite.rest.connection;
 
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
+import io.codevector.hexrite.rest.common.ResponseUtils;
 import io.codevector.hexrite.service.connection.ConnectionService;
 import io.codevector.hexrite.service.connection.ConnectionServiceImpl;
-import io.codevector.hexrite.utils.UniUtils;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -33,7 +33,7 @@ public class ConnectionRest {
     return this.connectionService
         .listConnections()
         .onItem()
-        .transform(list -> UniUtils.handleSuccess(list));
+        .transform(list -> ResponseUtils.handleSuccess(list));
   }
 
   @GET
@@ -43,7 +43,7 @@ public class ConnectionRest {
     return this.connectionService
         .getConnectionById(connectionId)
         .onItem()
-        .transform(UniUtils::handleSuccess);
+        .transform(ResponseUtils::handleSuccess);
   }
 
   @POST
@@ -53,7 +53,7 @@ public class ConnectionRest {
     return this.connectionService
         .createConnection(request)
         .onItem()
-        .transform(UniUtils::handleSuccess);
+        .transform(ResponseUtils::handleSuccess);
   }
 
   @PUT
@@ -65,7 +65,7 @@ public class ConnectionRest {
     return this.connectionService
         .updateConnection(connectionId, request)
         .onItem()
-        .transform(UniUtils::handleSuccess);
+        .transform(ResponseUtils::handleSuccess);
   }
 
   @DELETE
@@ -74,6 +74,6 @@ public class ConnectionRest {
     return this.connectionService
         .removeConnection(connectionId)
         .onItem()
-        .transform(UniUtils::handleSuccess);
+        .transform(ResponseUtils::handleSuccess);
   }
 }
