@@ -1,5 +1,6 @@
 package io.codevector.hexrite.entity.connection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
@@ -17,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.net.URI;
 import java.time.Instant;
 import org.jboss.logging.Logger;
@@ -31,6 +33,11 @@ public class Connection extends PanacheEntityBase {
   @GeneratedValue(strategy = GenerationType.UUID)
   @JsonProperty("id")
   public String id;
+
+  @Version
+  @JsonIgnore
+  @Column(name = "optlock", nullable = false)
+  protected long entityVersion;
 
   @Column(name = "name", nullable = false, unique = true)
   @JsonProperty("name")

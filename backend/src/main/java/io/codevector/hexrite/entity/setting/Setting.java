@@ -1,5 +1,6 @@
 package io.codevector.hexrite.entity.setting;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
@@ -7,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import org.jboss.logging.Logger;
 
 @Entity
@@ -20,6 +22,11 @@ public class Setting extends PanacheEntityBase {
   @Column(nullable = false, unique = true)
   @JsonProperty("key")
   public String key;
+
+  @Version
+  @JsonIgnore
+  @Column(name = "optlock", nullable = false)
+  protected long entityVersion;
 
   @Column(nullable = true)
   @JsonProperty("value")
