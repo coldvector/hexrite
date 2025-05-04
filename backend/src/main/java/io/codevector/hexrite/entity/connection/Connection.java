@@ -32,7 +32,7 @@ public class Connection extends PanacheEntityBase {
   @JsonProperty("id")
   public String id;
 
-  @Column(nullable = false, unique = true)
+  @Column(name = "name", nullable = false, unique = true)
   @JsonProperty("name")
   public String name;
 
@@ -40,12 +40,12 @@ public class Connection extends PanacheEntityBase {
   @JsonProperty("description")
   public String description;
 
-  @Column(name = "type")
+  @Column(name = "type", nullable = false)
   @Enumerated(EnumType.STRING)
   @JsonProperty("type")
   public ConnectionType type;
 
-  @Column(name = "base_url")
+  @Column(name = "base_url", nullable = false)
   @Convert(converter = UriConverter.class)
   @JsonProperty("baseUrl")
   public URI baseUrl;
@@ -55,10 +55,10 @@ public class Connection extends PanacheEntityBase {
   public String apiKey;
 
   @Column(name = "created_at", nullable = false, updatable = false)
-  @JsonProperty("createAt")
+  @JsonProperty("createdAt")
   public Instant createdAt;
 
-  @Column(name = "updated_at")
+  @Column(name = "updated_at", nullable = false)
   @JsonProperty("updatedAt")
   public Instant updatedAt;
 
