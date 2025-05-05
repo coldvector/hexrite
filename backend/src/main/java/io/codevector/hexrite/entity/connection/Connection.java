@@ -1,22 +1,24 @@
 package io.codevector.hexrite.entity.connection;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
 import io.codevector.hexrite.dto.connection.ConnectionType;
 import io.codevector.hexrite.entity.common.AbstractTimestampedEntity;
+import io.codevector.hexrite.entity.inference.Chat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 import java.net.URI;
+import java.util.List;
 
 @Entity
 @Table(name = "connections")
@@ -26,11 +28,6 @@ public class Connection extends AbstractTimestampedEntity {
   @GeneratedValue(strategy = GenerationType.UUID)
   @JsonProperty("id")
   public String id;
-
-  @Version
-  @JsonIgnore
-  @Column(name = "optlock", nullable = false)
-  protected long entityVersion;
 
   @Column(name = "name", nullable = false, unique = true)
   @JsonProperty("name")
@@ -57,6 +54,14 @@ public class Connection extends AbstractTimestampedEntity {
   @Column(name = "enabled", nullable = false)
   @JsonProperty("isEnabled")
   public boolean isEnabled;
+
+  @OneToMany(
+      mappedBy = "connection",
+      fetch = FetchType.LAZY,
+      orphanRemoval = false,
+      cascade = {})
+  @JsonProperty("chats")
+  public List<Chat> chats;
 
   @RequiredForJPA
   public Connection() {}

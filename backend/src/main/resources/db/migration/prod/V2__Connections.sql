@@ -19,7 +19,7 @@ create table hexrite.connections (
     "created_at" timestamp(6) with time zone not null,
     "updated_at" timestamp(6) with time zone not null,
     "enabled" boolean not null,
-    primary key (id)
+    primary key ("id")
 );
 CREATE VIEW hexrite.connections_simplified AS
 SELECT "id",
