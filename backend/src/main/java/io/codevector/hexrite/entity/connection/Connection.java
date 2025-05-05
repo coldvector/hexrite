@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
 import io.codevector.hexrite.dto.connection.ConnectionType;
-import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
+import io.codevector.hexrite.entity.common.AbstractTimestampedEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -14,19 +14,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import java.net.URI;
-import java.time.Instant;
-import org.jboss.logging.Logger;
 
 @Entity
 @Table(name = "connections")
-public class Connection extends PanacheEntityBase {
-
-  private static final Logger LOG = Logger.getLogger(Connection.class.getSimpleName());
+public class Connection extends AbstractTimestampedEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -60,14 +54,6 @@ public class Connection extends PanacheEntityBase {
   @JsonProperty("apiKey")
   public String apiKey;
 
-  @Column(name = "created_at", nullable = false, updatable = false)
-  @JsonProperty("createdAt")
-  public Instant createdAt;
-
-  @Column(name = "updated_at", nullable = false)
-  @JsonProperty("updatedAt")
-  public Instant updatedAt;
-
   @Column(name = "enabled", nullable = false)
   @JsonProperty("isEnabled")
   public boolean isEnabled;
@@ -91,16 +77,5 @@ public class Connection extends PanacheEntityBase {
     this.apiKey = updateRequest.apiKey();
     this.isEnabled = updateRequest.isEnabled();
     return this;
-  }
-
-  @PrePersist
-  public void prePersist() {
-    this.createdAt = Instant.now();
-    this.updatedAt = this.createdAt;
-  }
-
-  @PreUpdate
-  public void preUpdate() {
-    this.updatedAt = Instant.now();
   }
 }
