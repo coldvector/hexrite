@@ -12,7 +12,7 @@ INSERT INTO hexrite.connections (
     )
 VALUES (
         '33e8015c-d306-4cf1-a983-a0c248ba2809',
-        1,
+        0,
         'Ollama Work',
         'Ollama Workstation',
         'OLLAMA',
@@ -24,7 +24,7 @@ VALUES (
     ),
     (
         'c683af6f-7968-460d-bf97-09e9aa5c5888',
-        1,
+        0,
         'Ollama Home',
         'Ollama Homestation',
         'OLLAMA',
@@ -36,7 +36,7 @@ VALUES (
     ),
     (
         'ba907b31-9175-4ed3-ad24-f35e764145c4',
-        1,
+        0,
         'Gemini API Project',
         'GCP Project 210308234727',
         'GEMINI',
