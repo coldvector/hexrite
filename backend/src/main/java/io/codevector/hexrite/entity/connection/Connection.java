@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
 import io.codevector.hexrite.dto.connection.ConnectionType;
-import io.codevector.hexrite.entity.common.UriConverter;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

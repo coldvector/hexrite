@@ -1,4 +1,4 @@
-package io.codevector.hexrite.entity.common;
+package io.codevector.hexrite.entity.connection;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
