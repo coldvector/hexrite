@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface GeminiService {
 
-  public Uni<List<GeminiModel>> listModels(String connectionId);
+  Uni<List<GeminiModel>> listModels(String connectionId);
 
-  public Multi<JsonObject> generateContent(String connectionId, String model, String prompt);
+  Multi<JsonObject> generateContent(String connectionId, String model, String prompt);
 }

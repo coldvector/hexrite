@@ -4,5 +4,5 @@ import io.smallrye.mutiny.Uni;
 
 public interface PingService {
 
-  public Uni<String> ping();
+  Uni<String> ping();
 }

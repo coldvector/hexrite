@@ -8,19 +8,19 @@ import java.util.List;
 
 public interface OllamaService {
 
-  public Uni<String> ping(String connectionId);
+  Uni<String> ping(String connectionId);
 
-  public Uni<List<OllamaModel>> listLocalModels(String connectionId);
+  Uni<List<OllamaModel>> listLocalModels(String connectionId);
 
-  public Uni<List<OllamaModel>> listRunningModels(String connectionId);
+  Uni<List<OllamaModel>> listRunningModels(String connectionId);
 
-  public Multi<JsonObject> pullModel(String connectionId, String model);
+  Multi<JsonObject> pullModel(String connectionId, String model);
 
-  public Uni<Void> deleteModel(String connectionId, String model);
+  Uni<Void> deleteModel(String connectionId, String model);
 
-  public Uni<Void> loadModel(String connectionId, String model);
+  Uni<Void> loadModel(String connectionId, String model);
 
-  public Uni<Void> unloadModel(String connectionId, String model);
+  Uni<Void> unloadModel(String connectionId, String model);
 
-  public Multi<String> generateCompletion(String connectionId, String model, String prompt);
+  Multi<String> generateCompletion(String connectionId, String model, String prompt);
 }
