@@ -1,6 +1,6 @@
-package io.codevector.hexrite.entity.inference;
+package io.codevector.hexrite.entity.chat;
 
-import io.codevector.hexrite.dto.inference.common.ChatRole;
+import io.codevector.hexrite.dto.chat.ChatRole;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

@@ -1,4 +1,4 @@
-package io.codevector.hexrite.entity.inference;
+package io.codevector.hexrite.entity.chat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;

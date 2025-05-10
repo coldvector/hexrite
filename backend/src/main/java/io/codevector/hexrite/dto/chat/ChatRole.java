@@ -1,4 +1,4 @@
-package io.codevector.hexrite.dto.inference.common;
+package io.codevector.hexrite.dto.chat;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 

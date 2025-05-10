@@ -1,8 +1,8 @@
-package io.codevector.hexrite.entity.inference;
+package io.codevector.hexrite.entity.chat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
-import io.codevector.hexrite.dto.inference.common.ChatRole;
+import io.codevector.hexrite.dto.chat.ChatRole;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
