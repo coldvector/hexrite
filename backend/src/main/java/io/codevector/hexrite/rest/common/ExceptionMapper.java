@@ -12,6 +12,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
+import org.jboss.resteasy.reactive.common.NotImplementedYet;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 
 @Provider
@@ -41,6 +42,11 @@ public class ExceptionMapper {
   @ServerExceptionMapper(NotAllowedException.class)
   public Response handleMethodNotAllowed(NotAllowedException e) {
     return createErrorResponse(Response.Status.METHOD_NOT_ALLOWED, e.getMessage());
+  }
+
+  @ServerExceptionMapper(NotImplementedYet.class)
+  public Response handleNotImplementedYet(NotImplementedYet e) {
+    return createErrorResponse(Response.Status.NOT_IMPLEMENTED, e.getMessage());
   }
 
   @ServerExceptionMapper(ClientWebApplicationException.class)
