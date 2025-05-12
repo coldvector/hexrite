@@ -47,6 +47,10 @@ public class Chat extends AbstractTimestampedEntity {
       foreignKey = @ForeignKey(name = "chat_to_connection_fk"))
   public Connection connection;
 
+  @Column(name = "model", nullable = true)
+  @JsonProperty("model")
+  public String model;
+
   @RequiredForJPA
   public Chat() {}
 }
