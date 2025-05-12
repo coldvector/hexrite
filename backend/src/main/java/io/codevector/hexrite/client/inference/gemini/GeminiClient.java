@@ -24,6 +24,6 @@ public interface GeminiClient {
   @Path("/models/{model}:streamGenerateContent")
   @ClientQueryParam(name = "alt", value = "sse")
   @Produces(MediaType.SERVER_SENT_EVENTS)
-  @RestStreamElementType(MediaType.TEXT_PLAIN)
+  @RestStreamElementType(MediaType.APPLICATION_JSON)
   Multi<JsonObject> generateContent(@PathParam("model") String model, JsonObject request);
 }
