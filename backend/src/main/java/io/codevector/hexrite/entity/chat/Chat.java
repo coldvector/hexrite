@@ -53,4 +53,14 @@ public class Chat extends AbstractTimestampedEntity {
 
   @RequiredForJPA
   public Chat() {}
+
+  public Chat(String title, Connection connection, String model) {
+    this.title = title;
+    this.connection = connection;
+    this.model = model;
+  }
+
+  public Chat(Connection connection, String model) {
+    this("", connection, model);
+  }
 }

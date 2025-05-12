@@ -1,5 +1,6 @@
 package io.codevector.hexrite.entity.connection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
@@ -60,7 +61,7 @@ public class Connection extends AbstractTimestampedEntity {
       fetch = FetchType.LAZY,
       orphanRemoval = false,
       cascade = {})
-  @JsonProperty("chats")
+  @JsonIgnore
   public List<Chat> chats;
 
   @RequiredForJPA
