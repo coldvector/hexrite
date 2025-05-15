@@ -15,6 +15,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.List;
+import java.util.stream.Stream;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.common.NotImplementedYet;
 
@@ -42,27 +43,13 @@ public class ChatServiceImpl implements ChatService {
 
     String model = filter.getFirst("model");
     String connectionId = filter.getFirst("connectionId");
-    String connectionType = filter.getFirst("connectionType");
+    ConnectionType connectionType = ConnectionType.fromString(filter.getFirst("connectionType"));
 
     return chatRepository
         .listAll()
         .map(
             list ->
-                list.stream()
-                    .filter(chat -> model == null || model.isBlank() || model.equals(chat.model))
-                    .filter(
-                        chat ->
-                            connectionId == null
-                                || connectionId.isBlank()
-                                || (chat.connection != null
-                                    && connectionId.equals(chat.connection.id)))
-                    .filter(
-                        chat ->
-                            connectionType == null
-                                || connectionType.isBlank()
-                                || (chat.connection != null
-                                    && chat.connection.type != null
-                                    && connectionType.equals(chat.connection.type.name())))
+                chatFilter(list, model, connectionId, connectionType)
                     .map(chatMapper::toChatResponse)
                     .toList());
   }
@@ -116,5 +103,18 @@ public class ChatServiceImpl implements ChatService {
 
   private Uni<Connection> getConnectionById(String connectionId) {
     return connectionService.getConnectionById(connectionId);
+  }
+
+  private Stream<Chat> chatFilter(
+      List<Chat> allChats, String model, String connectionId, ConnectionType connectionType) {
+    return allChats.stream()
+        .filter(chat -> model == null || model.isBlank() || model.equals(chat.model))
+        .filter(chat -> chat.connection == null || chat.connection.type == connectionType)
+        .filter(
+            chat ->
+                chat.connection == null
+                    || connectionId == null
+                    || connectionId.isBlank()
+                    || connectionId.equals(chat.connection.id));
   }
 }
