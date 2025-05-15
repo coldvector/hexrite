@@ -16,23 +16,29 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 @Path("/v1/chat")
 public class ChatRest {
 
   private final ChatService chatService;
+  private final UriInfo uriInfo;
 
   @Inject
-  public ChatRest(ChatServiceImpl chatService) {
+  public ChatRest(ChatServiceImpl chatService, UriInfo uriInfo) {
     this.chatService = chatService;
+    this.uriInfo = uriInfo;
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> listChats() {
+    MultivaluedMap<String, String> filter = uriInfo.getQueryParameters();
+
     return this.chatService
-        .listChats()
+        .listChats(filter)
         .onItem()
         .transform(list -> ResponseUtils.handleSuccess(list));
   }

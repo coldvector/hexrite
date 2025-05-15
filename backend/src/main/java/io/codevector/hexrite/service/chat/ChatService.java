@@ -1,18 +1,14 @@
 package io.codevector.hexrite.service.chat;
 
 import io.codevector.hexrite.dto.chat.ChatResponse;
-import io.codevector.hexrite.dto.connection.ConnectionType;
 import io.codevector.hexrite.entity.chat.Chat;
 import io.smallrye.mutiny.Uni;
+import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.List;
 
 public interface ChatService {
 
-  Uni<List<ChatResponse>> listChats();
-
-  Uni<List<Chat>> listChatsByConnectionId(String connectionId);
-
-  Uni<List<Chat>> listChatsByConnectionType(ConnectionType connectionType);
+  Uni<List<ChatResponse>> listChats(MultivaluedMap<String, String> filter);
 
   Uni<Chat> getChatById(String chatId);
 
