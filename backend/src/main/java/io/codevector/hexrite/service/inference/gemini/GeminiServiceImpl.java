@@ -2,6 +2,7 @@ package io.codevector.hexrite.service.inference.gemini;
 
 import io.codevector.hexrite.client.inference.gemini.GeminiClient;
 import io.codevector.hexrite.client.inference.gemini.GeminiClientFactory;
+import io.codevector.hexrite.dto.error.ErrorResponse;
 import io.codevector.hexrite.dto.inference.gemini.GeminiModel;
 import io.codevector.hexrite.service.connection.ConnectionService;
 import io.smallrye.mutiny.Multi;
@@ -37,6 +38,7 @@ public class GeminiServiceImpl implements GeminiService {
   @Override
   public Uni<List<GeminiModel>> listModels(String connectionId) {
     LOG.infof("listModels: \"%s\"", connectionId);
+
     return getGeminiClient(connectionId)
         .chain(client -> client.listModels())
         .onItem()
@@ -45,12 +47,18 @@ public class GeminiServiceImpl implements GeminiService {
 
   @Override
   public Multi<JsonObject> generateContent(String connectionId, String model, String prompt) {
-    LOG.infof("generateCompletion: \"%s\", \"%s\"", connectionId, model);
+    LOG.infof("generateContent: \"%s\", \"%s\"", connectionId, model);
+
     return getGeminiClient(connectionId)
         .onItem()
         .transformToMulti(
             client ->
-                client.generateContent(model, payloadBuilder.createPayloadGenerateContent(prompt)));
+                client.generateContent(model, payloadBuilder.createPayloadGenerateContent(prompt)))
+        .onFailure()
+        .invoke(e -> LOG.errorf("generateContent: \"%s\"", e.getMessage()))
+        .onFailure()
+        .recoverWithMulti(
+            e -> Multi.createFrom().item(ErrorResponse.create(e.getMessage()).asJsonObject()));
   }
 
   private Uni<GeminiClient> getGeminiClient(String connectionId) {
