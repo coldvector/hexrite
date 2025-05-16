@@ -1,6 +1,6 @@
-create table hexrite.settings (
-    "key" varchar(255) not null,
-    "value" varchar(255),
-    "optlock" bigint not null,
-    primary key (key)
+CREATE TABLE hexrite.settings (
+    "key" VARCHAR(255) NOT NULL,
+    "value" VARCHAR(255),
+    "optlock" BIGINT NOT NULL,
+    PRIMARY KEY (KEY)
 );

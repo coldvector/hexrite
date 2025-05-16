@@ -1,10 +1,10 @@
-create table hexrite.connections (
-    "id" varchar(255) not null,
-    "optlock" bigint not null,
-    "name" varchar(255) not null unique,
-    "description" varchar(255),
-    "type" varchar(255) not null check (
-        "type" in (
+CREATE TABLE hexrite.connections (
+    "id" VARCHAR(255) NOT NULL,
+    "optlock" BIGINT NOT NULL,
+    "name" VARCHAR(255) NOT NULL UNIQUE,
+    "description" VARCHAR(255),
+    "type" VARCHAR(255) NOT NULL CHECK (
+        "type" IN (
             'OLLAMA',
             'CHATGPT',
             'GEMINI',
@@ -14,17 +14,20 @@ create table hexrite.connections (
             'CUSTOM'
         )
     ),
-    "base_url" varchar(255) not null,
-    "api_key" varchar(255),
-    "created_at" timestamp(6) with time zone not null,
-    "updated_at" timestamp(6) with time zone not null,
-    "enabled" boolean not null,
-    primary key ("id")
+    "base_url" VARCHAR(255) NOT NULL,
+    "api_key" VARCHAR(255),
+    "created_at" TIMESTAMP(6) WITH TIME ZONE NOT NULL,
+    "updated_at" TIMESTAMP(6) WITH TIME ZONE NOT NULL,
+    "enabled" BOOLEAN NOT NULL,
+    PRIMARY KEY ("id")
 );
+
 CREATE VIEW hexrite.connections_simplified AS
-SELECT "id",
+SELECT
+    "id",
     "name",
     "type",
     "base_url",
     "enabled"
-FROM hexrite.connections;
+FROM
+    hexrite.connections;
