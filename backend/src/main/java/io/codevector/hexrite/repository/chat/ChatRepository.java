@@ -37,6 +37,7 @@ public class ChatRepository implements PanacheRepositoryBase<Chat, String> {
 
   public Uni<Long> deleteByFilters(
       String model, String connectionId, ConnectionType connectionType) {
+
     StringBuilder query = new StringBuilder("1=1");
     Parameters parameters = new Parameters();
 

@@ -46,8 +46,8 @@ public class ChatServiceImpl implements ChatService {
 
     return chatRepository
         .findByFilters(model, connectionId, connectionType)
-        .project(ChatResponse.class)
-        .list();
+        .list()
+        .map(list -> list.stream().map(chatMapper::toChatResponse).toList());
   }
 
   @WithSession
