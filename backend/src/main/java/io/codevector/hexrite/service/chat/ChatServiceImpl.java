@@ -120,5 +120,4 @@ public class ChatServiceImpl implements ChatService {
   private Uni<Connection> getConnectionById(String connectionId) {
     return connectionService.getConnectionById(connectionId);
   }
-
 }

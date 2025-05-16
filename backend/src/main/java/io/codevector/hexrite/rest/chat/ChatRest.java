@@ -60,7 +60,7 @@ public class ChatRest {
   @PATCH
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  @Path("/{id}/updateTitle")
+  @Path("/{id}")
   public Uni<Response> updateChatTitle(@PathParam("id") String chatId, JsonObject payload) {
     return this.chatService
         .updateChatTitle(chatId, payload.getString("title", ""))
