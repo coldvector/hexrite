@@ -11,6 +11,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class ChatRepository implements PanacheRepositoryBase<Chat, String> {
 
+  public Uni<Chat> findByIdWithMessages(String chatId) {
+    return find("SELECT c FROM Chat c LEFT JOIN FETCH c.messages WHERE c.id = ?1", chatId)
+        .firstResult();
+  }
+
   public PanacheQuery<Chat> findByFilters(
       String model, String connectionId, ConnectionType connectionType) {
 
