@@ -15,7 +15,7 @@ public enum ConnectionType {
 
   public static ConnectionType fromString(String name) {
     if (name == null || name.isBlank()) {
-      return OPENAI_COMPATIBLE;
+      return null;
     }
 
     for (ConnectionType model : values()) {
@@ -24,6 +24,6 @@ public enum ConnectionType {
       }
     }
 
-    return OPENAI_COMPATIBLE;
+    return null;
   }
 }
