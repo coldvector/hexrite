@@ -19,4 +19,6 @@ public interface ChatService {
   // Uni<Void> addMessage(String chatId, String message);
 
   Uni<Void> deleteChatById(String chatId);
+
+  Uni<Void> deleteChats(MultivaluedMap<String, String> filter);
 }

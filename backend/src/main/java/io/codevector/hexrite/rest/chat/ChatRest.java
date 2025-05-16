@@ -16,7 +16,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 
@@ -35,10 +34,8 @@ public class ChatRest {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> listChats() {
-    MultivaluedMap<String, String> filter = uriInfo.getQueryParameters();
-
     return this.chatService
-        .listChats(filter)
+        .listChats(uriInfo.getQueryParameters())
         .onItem()
         .transform(list -> ResponseUtils.handleSuccess(list));
   }
@@ -73,7 +70,15 @@ public class ChatRest {
 
   @DELETE
   @Path("/{id}")
-  public Uni<Response> deleteChat(@PathParam("id") String chatId) {
+  public Uni<Response> deleteChatById(@PathParam("id") String chatId) {
     return this.chatService.deleteChatById(chatId).onItem().transform(ResponseUtils::handleSuccess);
+  }
+
+  @DELETE
+  public Uni<Response> deleteChats() {
+    return this.chatService
+        .deleteChats(uriInfo.getQueryParameters())
+        .onItem()
+        .transform(ResponseUtils::handleSuccess);
   }
 }
