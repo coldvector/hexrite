@@ -23,6 +23,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
@@ -157,11 +158,43 @@ public class ChatServiceImpl implements ChatService {
   }
 
   private Multi<JsonObject> streamAndBufferInference(Chat chat) {
+    AtomicReference<StringBuilder> buffer = new AtomicReference<>(new StringBuilder());
+
     return geminiService
         .generateContent(chat.connection.id, chat.model, chat.messages)
+        .onItem()
+        .invoke(chunk -> bufferContent(chunk, buffer))
+        .onCompletion()
+        .call(() -> persistInference(chat, buffer.get().toString()))
         .onFailure()
         .recoverWithMulti(
             e -> Multi.createFrom().item(ErrorResponse.create(e.getMessage()).asJsonObject()));
+  }
+
+  private void bufferContent(JsonObject chunk, AtomicReference<StringBuilder> buffer) {
+    String text =
+        chunk
+            .getJsonArray("candidates")
+            .getJsonObject(0)
+            .getJsonObject("content")
+            .getJsonArray("parts")
+            .getJsonObject(0)
+            .getString("text");
+
+    if (text != null) {
+      buffer.get().append(text);
+    }
+  }
+
+  private Uni<Message> persistInference(Chat chat, String response) {
+    LOG.infof("persistAssistantMessage: chatId=\"%s\", response=\"%s\"", chat.id, response);
+
+    return Panache.withTransaction(
+        () ->
+            messageRepository
+                .persist(new Message(chat, ChatRole.MODEL, response))
+                .onItem()
+                .invoke(m -> chat.messages.add(m)));
   }
 
   private Uni<Connection> getConnectionById(String connectionId) {
