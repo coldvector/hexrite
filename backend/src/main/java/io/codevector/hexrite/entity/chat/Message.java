@@ -50,4 +50,11 @@ public class Message extends PanacheEntityBase {
 
   @RequiredForJPA
   public Message() {}
+
+  public Message(Chat chatSession, ChatRole role, String content) {
+    this.chatSession = chatSession;
+    this.role = role;
+    this.content = content;
+    this.timestamp = Instant.now();
+  }
 }
