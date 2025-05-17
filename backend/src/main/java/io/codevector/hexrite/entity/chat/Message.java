@@ -1,5 +1,6 @@
 package io.codevector.hexrite.entity.chat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
 import io.codevector.hexrite.dto.chat.ChatRole;
@@ -31,6 +32,7 @@ public class Message extends PanacheEntityBase {
       referencedColumnName = "id",
       nullable = false,
       foreignKey = @ForeignKey(name = "message_to_chat_fk"))
+  @JsonIgnore
   public Chat chatSession;
 
   @Column(name = "role", nullable = false)
