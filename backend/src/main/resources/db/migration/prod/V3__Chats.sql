@@ -21,3 +21,16 @@ CREATE TABLE hexrite.messages (
     CONSTRAINT "message_to_chat_fk" FOREIGN key ("chat_id") REFERENCES chats ("id"),
     PRIMARY KEY ("id")
 );
+
+CREATE VIEW hexrite.chats_simplified AS
+SELECT
+    c."id" AS "chat_id",
+    c."title" AS "chat_title",
+    c."model" AS "model",
+    m."id" AS "message_id",
+    m."role" AS "role",
+    m."content" AS "content",
+    m."timestamp" AS "timestamp"
+FROM
+    hexrite.chats c
+    LEFT JOIN hexrite.messages m ON c."id" = m."chat_id";
