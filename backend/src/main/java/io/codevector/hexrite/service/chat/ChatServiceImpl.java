@@ -97,29 +97,13 @@ public class ChatServiceImpl implements ChatService {
         .map(chatMapper::toChatResponse);
   }
 
-  // @WithTransaction -> not using because it only supports Uni<T> return type
   @Override
   public Multi<JsonObject> chat(String chatId, String message) {
     LOG.debugf("chat: chatId=\"%s\", message=\"%s\"", chatId, message);
 
-    return Panache.withTransaction(
-            () ->
-                getChatById(chatId)
-                    .onItem()
-                    .ifNull()
-                    .failWith(new ResourceNotFoundException("Chat not found"))
-                    .call(
-                        chat ->
-                            messageRepository
-                                .persist(new Message(chat, ChatRole.USER, message))
-                                .onItem()
-                                .invoke(m -> chat.messages.add(m))))
+    return persistUserPrompt(chatId, message)
         .onItem()
-        .transformToMulti(
-            chat -> geminiService.generateContent(chat.connection.id, chat.model, chat.messages))
-        .onFailure()
-        .recoverWithMulti(
-            e -> Multi.createFrom().item(ErrorResponse.create(e.getMessage()).asJsonObject()));
+        .transformToMulti(chat -> streamAndBufferInference(chat));
   }
 
   @WithTransaction
@@ -155,6 +139,29 @@ public class ChatServiceImpl implements ChatService {
                     ? Uni.createFrom().voidItem()
                     : Uni.createFrom()
                         .failure(new ResourceNotFoundException("No such chats found")));
+  }
+
+  private Uni<Chat> persistUserPrompt(String chatId, String message) {
+    return Panache.withTransaction(
+        () ->
+            getChatById(chatId)
+                .onItem()
+                .ifNull()
+                .failWith(new ResourceNotFoundException("Chat not found"))
+                .call(
+                    chat ->
+                        messageRepository
+                            .persist(new Message(chat, ChatRole.USER, message))
+                            .onItem()
+                            .invoke(m -> chat.messages.add(m))));
+  }
+
+  private Multi<JsonObject> streamAndBufferInference(Chat chat) {
+    return geminiService
+        .generateContent(chat.connection.id, chat.model, chat.messages)
+        .onFailure()
+        .recoverWithMulti(
+            e -> Multi.createFrom().item(ErrorResponse.create(e.getMessage()).asJsonObject()));
   }
 
   private Uni<Connection> getConnectionById(String connectionId) {
