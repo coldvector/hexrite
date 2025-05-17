@@ -7,8 +7,6 @@ import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,7 +35,6 @@ public class Message extends PanacheEntityBase {
 
   @Column(name = "role", nullable = false)
   @Convert(converter = ChatRoleConverter.class)
-  @Enumerated(EnumType.STRING)
   @JsonProperty("role")
   public ChatRole role;
 

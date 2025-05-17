@@ -2,11 +2,14 @@ package io.codevector.hexrite.service.chat;
 
 import io.codevector.hexrite.dto.chat.ChatMapper;
 import io.codevector.hexrite.dto.chat.ChatResponse;
+import io.codevector.hexrite.dto.chat.ChatRole;
 import io.codevector.hexrite.dto.connection.ConnectionType;
 import io.codevector.hexrite.entity.chat.Chat;
+import io.codevector.hexrite.entity.chat.Message;
 import io.codevector.hexrite.entity.connection.Connection;
 import io.codevector.hexrite.exceptions.ResourceNotFoundException;
 import io.codevector.hexrite.repository.chat.ChatRepository;
+import io.codevector.hexrite.repository.chat.MessageRepository;
 import io.codevector.hexrite.service.connection.ConnectionService;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
@@ -16,7 +19,6 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.List;
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.reactive.common.NotImplementedYet;
 
 @ApplicationScoped
 public class ChatServiceImpl implements ChatService {
@@ -24,13 +26,18 @@ public class ChatServiceImpl implements ChatService {
   private static final Logger LOG = Logger.getLogger(ChatService.class.getSimpleName());
 
   private final ChatRepository chatRepository;
+  private final MessageRepository messageRepository;
   private final ChatMapper chatMapper;
   private final ConnectionService connectionService;
 
   @Inject
   public ChatServiceImpl(
-      ChatRepository chatRepository, ChatMapper chatMapper, ConnectionService connectionService) {
+      ChatRepository chatRepository,
+      MessageRepository messageRepository,
+      ChatMapper chatMapper,
+      ConnectionService connectionService) {
     this.chatRepository = chatRepository;
+    this.messageRepository = messageRepository;
     this.chatMapper = chatMapper;
     this.connectionService = connectionService;
   }
@@ -87,7 +94,10 @@ public class ChatServiceImpl implements ChatService {
   public Uni<Void> chat(String chatId, String message) {
     LOG.debugf("chat: chatId=\"%s\", message=\"%s\"", chatId, message);
 
-    throw new NotImplementedYet();
+    return getChatById(chatId)
+        .chain(chat -> messageRepository.persist(new Message(chat, ChatRole.USER, message)))
+        .onItem()
+        .transform(ignored -> null);
   }
 
   @WithTransaction
