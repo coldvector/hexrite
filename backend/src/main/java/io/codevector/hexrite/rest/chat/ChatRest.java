@@ -3,6 +3,7 @@ package io.codevector.hexrite.rest.chat;
 import io.codevector.hexrite.rest.common.ResponseUtils;
 import io.codevector.hexrite.service.chat.ChatService;
 import io.codevector.hexrite.service.chat.ChatServiceImpl;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
 import jakarta.inject.Inject;
@@ -18,6 +19,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
+import org.jboss.resteasy.reactive.RestStreamElementType;
 
 @Path("/v1/chat")
 public class ChatRest {
@@ -70,13 +72,11 @@ public class ChatRest {
 
   @PUT
   @Path("/{id}")
-  @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  public Uni<Response> chat(@PathParam("id") String chatId, JsonObject payload) {
-    return this.chatService
-        .chat(chatId, payload.getString("message", ""))
-        .onItem()
-        .transform(ResponseUtils::handleSuccess);
+  @Produces(MediaType.SERVER_SENT_EVENTS)
+  @RestStreamElementType(MediaType.TEXT_PLAIN)
+  public Multi<JsonObject> chat(@PathParam("id") String chatId, JsonObject payload) {
+    return this.chatService.chat(chatId, payload.getString("message", ""));
   }
 
   @DELETE

@@ -2,7 +2,9 @@ package io.codevector.hexrite.service.chat;
 
 import io.codevector.hexrite.dto.chat.ChatResponse;
 import io.codevector.hexrite.entity.chat.Chat;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.json.JsonObject;
 import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public interface ChatService {
 
   Uni<ChatResponse> updateChatTitle(String chatId, String name);
 
-  Uni<Void> chat(String chatId, String message);
+  Multi<JsonObject> chat(String chatId, String message);
 
   Uni<Void> deleteChatById(String chatId);
 

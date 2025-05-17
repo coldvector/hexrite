@@ -4,6 +4,7 @@ import io.codevector.hexrite.client.inference.gemini.GeminiClient;
 import io.codevector.hexrite.client.inference.gemini.GeminiClientFactory;
 import io.codevector.hexrite.dto.error.ErrorResponse;
 import io.codevector.hexrite.dto.inference.gemini.GeminiModel;
+import io.codevector.hexrite.entity.chat.Message;
 import io.codevector.hexrite.service.connection.ConnectionService;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
@@ -54,6 +55,24 @@ public class GeminiServiceImpl implements GeminiService {
         .transformToMulti(
             client ->
                 client.generateContent(model, payloadBuilder.createPayloadGenerateContent(prompt)))
+        .onFailure()
+        .invoke(e -> LOG.errorf("generateContent: \"%s\"", e.getMessage()))
+        .onFailure()
+        .recoverWithMulti(
+            e -> Multi.createFrom().item(ErrorResponse.create(e.getMessage()).asJsonObject()));
+  }
+
+  @Override
+  public Multi<JsonObject> generateContent(
+      String connectionId, String model, List<Message> messageList) {
+    LOG.infof(
+        "generateContent: \"%s\", \"%s\", messageSize=\"%d\"",
+        connectionId, model, messageList.size());
+
+    return getGeminiClient(connectionId)
+        .onItem()
+        .transformToMulti(
+            client -> client.generateContent(model, payloadBuilder.createPayloadChat(messageList)))
         .onFailure()
         .invoke(e -> LOG.errorf("generateContent: \"%s\"", e.getMessage()))
         .onFailure()

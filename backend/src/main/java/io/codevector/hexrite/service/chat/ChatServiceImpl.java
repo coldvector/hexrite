@@ -4,6 +4,7 @@ import io.codevector.hexrite.dto.chat.ChatMapper;
 import io.codevector.hexrite.dto.chat.ChatResponse;
 import io.codevector.hexrite.dto.chat.ChatRole;
 import io.codevector.hexrite.dto.connection.ConnectionType;
+import io.codevector.hexrite.dto.error.ErrorResponse;
 import io.codevector.hexrite.entity.chat.Chat;
 import io.codevector.hexrite.entity.chat.Message;
 import io.codevector.hexrite.entity.connection.Connection;
@@ -11,9 +12,13 @@ import io.codevector.hexrite.exceptions.ResourceNotFoundException;
 import io.codevector.hexrite.repository.chat.ChatRepository;
 import io.codevector.hexrite.repository.chat.MessageRepository;
 import io.codevector.hexrite.service.connection.ConnectionService;
+import io.codevector.hexrite.service.inference.gemini.GeminiService;
+import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MultivaluedMap;
@@ -29,17 +34,20 @@ public class ChatServiceImpl implements ChatService {
   private final MessageRepository messageRepository;
   private final ChatMapper chatMapper;
   private final ConnectionService connectionService;
+  private final GeminiService geminiService;
 
   @Inject
   public ChatServiceImpl(
       ChatRepository chatRepository,
       MessageRepository messageRepository,
       ChatMapper chatMapper,
-      ConnectionService connectionService) {
+      ConnectionService connectionService,
+      GeminiService geminiService) {
     this.chatRepository = chatRepository;
     this.messageRepository = messageRepository;
     this.chatMapper = chatMapper;
     this.connectionService = connectionService;
+    this.geminiService = geminiService;
   }
 
   @WithSession
@@ -89,15 +97,29 @@ public class ChatServiceImpl implements ChatService {
         .map(chatMapper::toChatResponse);
   }
 
-  @WithTransaction
+  // @WithTransaction -> not using because it only supports Uni<T> return type
   @Override
-  public Uni<Void> chat(String chatId, String message) {
+  public Multi<JsonObject> chat(String chatId, String message) {
     LOG.debugf("chat: chatId=\"%s\", message=\"%s\"", chatId, message);
 
-    return getChatById(chatId)
-        .chain(chat -> messageRepository.persist(new Message(chat, ChatRole.USER, message)))
+    return Panache.withTransaction(
+            () ->
+                getChatById(chatId)
+                    .onItem()
+                    .ifNull()
+                    .failWith(new ResourceNotFoundException("Chat not found"))
+                    .call(
+                        chat ->
+                            messageRepository
+                                .persist(new Message(chat, ChatRole.USER, message))
+                                .onItem()
+                                .invoke(m -> chat.messages.add(m))))
         .onItem()
-        .transform(ignored -> null);
+        .transformToMulti(
+            chat -> geminiService.generateContent(chat.connection.id, chat.model, chat.messages))
+        .onFailure()
+        .recoverWithMulti(
+            e -> Multi.createFrom().item(ErrorResponse.create(e.getMessage()).asJsonObject()));
   }
 
   @WithTransaction
