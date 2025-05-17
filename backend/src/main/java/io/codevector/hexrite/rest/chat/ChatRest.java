@@ -1,6 +1,5 @@
 package io.codevector.hexrite.rest.chat;
 
-import io.codevector.hexrite.dto.chat.ChatRequest;
 import io.codevector.hexrite.rest.common.ResponseUtils;
 import io.codevector.hexrite.service.chat.ChatService;
 import io.codevector.hexrite.service.chat.ChatServiceImpl;
@@ -51,9 +50,9 @@ public class ChatRest {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  public Uni<Response> createChat(ChatRequest request) {
+  public Uni<Response> createChat(JsonObject payload) {
     return this.chatService
-        .createChat(request.connectionId(), request.model())
+        .createChat(payload.getString("connectionId"), payload.getString("model"))
         .onItem()
         .transform(ResponseUtils::handleSuccess);
   }
