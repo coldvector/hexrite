@@ -12,6 +12,7 @@ import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -64,6 +65,17 @@ public class ChatRest {
   public Uni<Response> updateChatTitle(@PathParam("id") String chatId, JsonObject payload) {
     return this.chatService
         .updateChatTitle(chatId, payload.getString("title", ""))
+        .onItem()
+        .transform(ResponseUtils::handleSuccess);
+  }
+
+  @PUT
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Path("/{id}")
+  public Uni<Response> chat(@PathParam("id") String chatId, JsonObject payload) {
+    return this.chatService
+        .chat(chatId, payload.getString("message", ""))
         .onItem()
         .transform(ResponseUtils::handleSuccess);
   }

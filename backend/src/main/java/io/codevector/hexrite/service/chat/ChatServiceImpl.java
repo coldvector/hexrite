@@ -84,6 +84,14 @@ public class ChatServiceImpl implements ChatService {
 
   @WithTransaction
   @Override
+  public Uni<Void> chat(String chatId, String message) {
+    LOG.debugf("chat: chatId=\"%s\", message=\"%s\"", chatId, message);
+
+    throw new NotImplementedYet();
+  }
+
+  @WithTransaction
+  @Override
   public Uni<Void> deleteChatById(String chatId) {
     LOG.debugf("deleteChatById: chatId=\"%s\"", chatId);
 

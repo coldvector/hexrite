@@ -16,7 +16,7 @@ public interface ChatService {
 
   Uni<ChatResponse> updateChatTitle(String chatId, String name);
 
-  // Uni<Void> addMessage(String chatId, String message);
+  Uni<Void> chat(String chatId, String message);
 
   Uni<Void> deleteChatById(String chatId);
 
