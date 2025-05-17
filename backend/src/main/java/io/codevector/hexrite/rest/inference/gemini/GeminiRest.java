@@ -24,8 +24,8 @@ public class GeminiRest {
     this.geminiService = geminiService;
   }
 
-  @Path("/list")
   @POST
+  @Path("/list")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> listLocalModels(JsonObject payload) {
@@ -35,8 +35,8 @@ public class GeminiRest {
         .transform(ResponseUtils::handleSuccess);
   }
 
-  @Path("/generate")
   @POST
+  @Path("/generate")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.SERVER_SENT_EVENTS)
   @RestStreamElementType(MediaType.TEXT_PLAIN)

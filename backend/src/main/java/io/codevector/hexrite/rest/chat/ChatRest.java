@@ -41,15 +41,15 @@ public class ChatRest {
   }
 
   @GET
-  @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> getChatById(@PathParam("id") String chatId) {
     return this.chatService.getChatById(chatId).onItem().transform(ResponseUtils::handleSuccess);
   }
 
   @POST
-  @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> createChat(JsonObject payload) {
     return this.chatService
         .createChat(payload.getString("connectionId"), payload.getString("model"))
@@ -58,9 +58,9 @@ public class ChatRest {
   }
 
   @PATCH
-  @Produces(MediaType.APPLICATION_JSON)
-  @Consumes(MediaType.APPLICATION_JSON)
   @Path("/{id}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> updateChatTitle(@PathParam("id") String chatId, JsonObject payload) {
     return this.chatService
         .updateChatTitle(chatId, payload.getString("title", ""))
@@ -69,9 +69,9 @@ public class ChatRest {
   }
 
   @PUT
+  @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  @Path("/{id}")
   public Uni<Response> chat(@PathParam("id") String chatId, JsonObject payload) {
     return this.chatService
         .chat(chatId, payload.getString("message", ""))

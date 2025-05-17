@@ -37,8 +37,8 @@ public class ConnectionRest {
   }
 
   @GET
-  @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> getConnectionById(@PathParam("id") String connectionId) {
     return this.connectionService
         .getConnectionById(connectionId)
@@ -57,9 +57,9 @@ public class ConnectionRest {
   }
 
   @PUT
+  @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  @Path("/{id}")
   public Uni<Response> updateConnection(
       @PathParam("id") String connectionId, ConnectionRequest request) {
     return this.connectionService

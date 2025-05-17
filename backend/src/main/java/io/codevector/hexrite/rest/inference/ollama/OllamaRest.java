@@ -33,8 +33,8 @@ public class OllamaRest {
         .transform(ResponseUtils::handleSuccess);
   }
 
-  @Path("/list")
   @POST
+  @Path("/list")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> listLocalModels(JsonObject payload) {
@@ -44,8 +44,8 @@ public class OllamaRest {
         .transform(ResponseUtils::handleSuccess);
   }
 
-  @Path("/ps")
   @POST
+  @Path("/ps")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> listRunningModels(JsonObject payload) {
@@ -55,16 +55,16 @@ public class OllamaRest {
         .transform(ResponseUtils::handleSuccess);
   }
 
-  @Path("/pull")
   @POST
+  @Path("/pull")
   @Consumes(MediaType.APPLICATION_JSON)
   @RestStreamElementType(MediaType.APPLICATION_JSON)
   public Multi<JsonObject> pullModel(JsonObject payload) {
     return ollamaService.pullModel(payload.getString("connectionId"), payload.getString("model"));
   }
 
-  @Path("/delete")
   @POST
+  @Path("/delete")
   @Consumes(MediaType.APPLICATION_JSON)
   public Uni<Response> deleteModel(JsonObject payload) {
     return ollamaService
@@ -73,8 +73,8 @@ public class OllamaRest {
         .transform(ResponseUtils::handleSuccess);
   }
 
-  @Path("/load")
   @POST
+  @Path("/load")
   @Consumes(MediaType.APPLICATION_JSON)
   public Uni<Response> loadModel(JsonObject payload) {
     return ollamaService
@@ -83,8 +83,8 @@ public class OllamaRest {
         .transform(ResponseUtils::handleSuccess);
   }
 
-  @Path("/unload")
   @POST
+  @Path("/unload")
   @Consumes(MediaType.APPLICATION_JSON)
   public Uni<Response> unloadModel(JsonObject payload) {
     return ollamaService
@@ -93,8 +93,8 @@ public class OllamaRest {
         .transform(ResponseUtils::handleSuccess);
   }
 
-  @Path("/generate")
   @POST
+  @Path("/generate")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.SERVER_SENT_EVENTS)
   @RestStreamElementType(MediaType.TEXT_PLAIN)
