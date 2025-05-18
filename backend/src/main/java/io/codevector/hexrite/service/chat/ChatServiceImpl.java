@@ -172,14 +172,7 @@ public class ChatServiceImpl implements ChatService {
   }
 
   private void bufferContent(JsonObject chunk, AtomicReference<StringBuilder> buffer) {
-    String text =
-        chunk
-            .getJsonArray("candidates")
-            .getJsonObject(0)
-            .getJsonObject("content")
-            .getJsonArray("parts")
-            .getJsonObject(0)
-            .getString("text");
+    String text = chunk.getString("text");
 
     if (text != null) {
       buffer.get().append(text);

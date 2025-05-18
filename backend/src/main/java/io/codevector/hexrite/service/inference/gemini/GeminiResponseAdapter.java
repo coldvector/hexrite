@@ -1,5 +1,6 @@
 package io.codevector.hexrite.service.inference.gemini;
 
+import io.codevector.hexrite.dto.inference.common.InferenceChunk;
 import io.codevector.hexrite.dto.inference.gemini.GeminiModel;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,6 +20,17 @@ public class GeminiResponseAdapter {
         .map(JsonObject.class::cast)
         .map(model -> parseModel(model))
         .collect(Collectors.toList());
+  }
+
+  JsonObject parseStreamingResponseChunk(JsonObject json) {
+    return JsonObject.mapFrom(
+        new InferenceChunk(
+            json.getJsonArray("candidates")
+                .getJsonObject(0)
+                .getJsonObject("content")
+                .getJsonArray("parts")
+                .getJsonObject(0)
+                .getString("text")));
   }
 
   private GeminiModel parseModel(JsonObject json) {

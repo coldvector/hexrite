@@ -1,5 +1,6 @@
 package io.codevector.hexrite.service.inference.ollama;
 
+import io.codevector.hexrite.dto.inference.common.InferenceChunk;
 import io.codevector.hexrite.dto.inference.ollama.OllamaModel;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,6 +20,15 @@ public class OllamaResponseAdapter {
         .map(JsonObject.class::cast)
         .map(model -> parseModel(model))
         .collect(Collectors.toList());
+  }
+
+  JsonObject parseStreamingGenerationResponseChunk(JsonObject json) {
+    return JsonObject.mapFrom(new InferenceChunk(json.getString("response")));
+  }
+
+  JsonObject parseStreamingChatGenerationResponseChunk(JsonObject json) {
+    return JsonObject.mapFrom(
+        new InferenceChunk(json.getJsonObject("message").getString("content")));
   }
 
   private OllamaModel parseModel(JsonObject json) {

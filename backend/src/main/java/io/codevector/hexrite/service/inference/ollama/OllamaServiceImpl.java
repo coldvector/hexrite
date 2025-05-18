@@ -102,8 +102,11 @@ public class OllamaServiceImpl implements OllamaService {
         .transformToMulti(
             client ->
                 parseNDJSON(
-                    client.generateCompletion(
-                        payloadBuilder.createPayloadGenerateCompletion(model, prompt))))
+                        client.generateCompletion(
+                            payloadBuilder.createPayloadGenerateCompletion(model, prompt)))
+                    .onItem()
+                    .transform(
+                        chunk -> responseAdapter.parseStreamingGenerationResponseChunk(chunk)))
         .onFailure()
         .invoke(e -> LOG.errorf("generateCompletion: \"%s\"", e.getMessage()))
         .onFailure()
@@ -123,8 +126,11 @@ public class OllamaServiceImpl implements OllamaService {
         .transformToMulti(
             client ->
                 parseNDJSON(
-                    client.generateChatCompletion(
-                        payloadBuilder.createPayloadGenerateChatCompletion(model, messageList))))
+                        client.generateChatCompletion(
+                            payloadBuilder.createPayloadGenerateChatCompletion(model, messageList)))
+                    .onItem()
+                    .transform(
+                        chunk -> responseAdapter.parseStreamingChatGenerationResponseChunk(chunk)))
         .onFailure()
         .invoke(e -> LOG.errorf("generateCompletion: \"%s\"", e.getMessage()))
         .onFailure()

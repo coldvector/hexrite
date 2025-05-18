@@ -54,7 +54,10 @@ public class GeminiServiceImpl implements GeminiService {
         .onItem()
         .transformToMulti(
             client ->
-                client.generateContent(model, payloadBuilder.createPayloadGenerateContent(prompt)))
+                client
+                    .generateContent(model, payloadBuilder.createPayloadGenerateContent(prompt))
+                    .onItem()
+                    .transform(chunk -> responseAdapter.parseStreamingResponseChunk(chunk)))
         .onFailure()
         .invoke(e -> LOG.errorf("generateContent: \"%s\"", e.getMessage()))
         .onFailure()
@@ -72,7 +75,11 @@ public class GeminiServiceImpl implements GeminiService {
     return getGeminiClient(connectionId)
         .onItem()
         .transformToMulti(
-            client -> client.generateContent(model, payloadBuilder.createPayloadChat(messageList)))
+            client ->
+                client
+                    .generateContent(model, payloadBuilder.createPayloadChat(messageList))
+                    .onItem()
+                    .transform(chunk -> responseAdapter.parseStreamingResponseChunk(chunk)))
         .onFailure()
         .invoke(e -> LOG.errorf("generateContent: \"%s\"", e.getMessage()))
         .onFailure()
