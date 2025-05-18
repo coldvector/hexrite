@@ -8,7 +8,6 @@ import io.codevector.hexrite.dto.inference.ollama.OllamaModel;
 import io.codevector.hexrite.entity.chat.Message;
 import io.codevector.hexrite.service.connection.ConnectionService;
 import io.codevector.hexrite.service.inference.common.InferenceService;
-import io.quarkus.arc.Unremovable;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
@@ -18,7 +17,6 @@ import java.util.List;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
-@Unremovable
 public class OllamaServiceImpl implements OllamaService, InferenceService {
 
   private static final Logger LOG = Logger.getLogger(OllamaService.class);
