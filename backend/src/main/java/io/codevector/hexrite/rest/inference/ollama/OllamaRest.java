@@ -37,9 +37,9 @@ public class OllamaRest {
   @Path("/list")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Uni<Response> listLocalModels(JsonObject payload) {
+  public Uni<Response> listModels(JsonObject payload) {
     return ollamaService
-        .listLocalModels(payload.getString("connectionId"))
+        .listModels(payload.getString("connectionId"))
         .onItem()
         .transform(ResponseUtils::handleSuccess);
   }

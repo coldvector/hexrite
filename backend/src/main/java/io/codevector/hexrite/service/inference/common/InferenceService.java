@@ -1,15 +1,14 @@
-package io.codevector.hexrite.service.inference.gemini;
+package io.codevector.hexrite.service.inference.common;
 
-import io.codevector.hexrite.dto.inference.gemini.GeminiModel;
+import io.codevector.hexrite.dto.connection.ConnectionType;
 import io.codevector.hexrite.entity.chat.Message;
 import io.smallrye.mutiny.Multi;
-import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
 import java.util.List;
 
-public interface GeminiService {
+public interface InferenceService {
 
-  Uni<List<GeminiModel>> listModels(String connectionId);
+  ConnectionType getType();
 
   Multi<JsonObject> generateCompletion(String connectionId, String model, String prompt);
 

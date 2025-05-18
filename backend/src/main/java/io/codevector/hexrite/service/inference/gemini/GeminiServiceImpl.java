@@ -2,10 +2,12 @@ package io.codevector.hexrite.service.inference.gemini;
 
 import io.codevector.hexrite.client.inference.gemini.GeminiClient;
 import io.codevector.hexrite.client.inference.gemini.GeminiClientFactory;
+import io.codevector.hexrite.dto.connection.ConnectionType;
 import io.codevector.hexrite.dto.error.ErrorResponse;
 import io.codevector.hexrite.dto.inference.gemini.GeminiModel;
 import io.codevector.hexrite.entity.chat.Message;
 import io.codevector.hexrite.service.connection.ConnectionService;
+import io.codevector.hexrite.service.inference.common.InferenceService;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
@@ -15,7 +17,7 @@ import java.util.List;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
-public class GeminiServiceImpl implements GeminiService {
+public class GeminiServiceImpl implements GeminiService, InferenceService {
 
   private static final Logger LOG = Logger.getLogger(GeminiService.class);
 
@@ -37,6 +39,11 @@ public class GeminiServiceImpl implements GeminiService {
   }
 
   @Override
+  public ConnectionType getType() {
+    return ConnectionType.GEMINI;
+  }
+
+  @Override
   public Uni<List<GeminiModel>> listModels(String connectionId) {
     LOG.infof("listModels: \"%s\"", connectionId);
 
@@ -47,8 +54,8 @@ public class GeminiServiceImpl implements GeminiService {
   }
 
   @Override
-  public Multi<JsonObject> generateContent(String connectionId, String model, String prompt) {
-    LOG.infof("generateContent: \"%s\", \"%s\"", connectionId, model);
+  public Multi<JsonObject> generateCompletion(String connectionId, String model, String prompt) {
+    LOG.infof("generateCompletion: \"%s\", model=\"%s\"", connectionId, model);
 
     return getGeminiClient(connectionId)
         .onItem()
@@ -66,10 +73,10 @@ public class GeminiServiceImpl implements GeminiService {
   }
 
   @Override
-  public Multi<JsonObject> generateContent(
+  public Multi<JsonObject> generateChat(
       String connectionId, String model, List<Message> messageList) {
     LOG.infof(
-        "generateContent: \"%s\", \"%s\", messageSize=\"%d\"",
+        "generateContent: \"%s\", model=\"%s\", messageSize=\"%d\"",
         connectionId, model, messageList.size());
 
     return getGeminiClient(connectionId)

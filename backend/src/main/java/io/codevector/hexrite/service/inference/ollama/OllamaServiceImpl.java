@@ -2,10 +2,13 @@ package io.codevector.hexrite.service.inference.ollama;
 
 import io.codevector.hexrite.client.inference.ollama.OllamaClient;
 import io.codevector.hexrite.client.inference.ollama.OllamaClientFactory;
+import io.codevector.hexrite.dto.connection.ConnectionType;
 import io.codevector.hexrite.dto.error.ErrorResponse;
 import io.codevector.hexrite.dto.inference.ollama.OllamaModel;
 import io.codevector.hexrite.entity.chat.Message;
 import io.codevector.hexrite.service.connection.ConnectionService;
+import io.codevector.hexrite.service.inference.common.InferenceService;
+import io.quarkus.arc.Unremovable;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
@@ -15,7 +18,8 @@ import java.util.List;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
-public class OllamaServiceImpl implements OllamaService {
+@Unremovable
+public class OllamaServiceImpl implements OllamaService, InferenceService {
 
   private static final Logger LOG = Logger.getLogger(OllamaService.class);
 
@@ -37,14 +41,19 @@ public class OllamaServiceImpl implements OllamaService {
   }
 
   @Override
+  public ConnectionType getType() {
+    return ConnectionType.OLLAMA;
+  }
+
+  @Override
   public Uni<String> ping(String connectionId) {
     LOG.infof("ping: \"%s\"", connectionId);
     return getOllamaClient(connectionId).chain(client -> client.ping());
   }
 
   @Override
-  public Uni<List<OllamaModel>> listLocalModels(String connectionId) {
-    LOG.infof("listLocalModels: \"%s\"", connectionId);
+  public Uni<List<OllamaModel>> listModels(String connectionId) {
+    LOG.infof("listModels: \"%s\"", connectionId);
     return getOllamaClient(connectionId)
         .chain(client -> client.listLocalModels())
         .onItem()
@@ -95,7 +104,7 @@ public class OllamaServiceImpl implements OllamaService {
 
   @Override
   public Multi<JsonObject> generateCompletion(String connectionId, String model, String prompt) {
-    LOG.infof("generateContent: \"%s\", \"%s\"", connectionId, model);
+    LOG.infof("generateCompletion: \"%s\", \"%s\"", connectionId, model);
 
     return getOllamaClient(connectionId)
         .onItem()
@@ -115,10 +124,10 @@ public class OllamaServiceImpl implements OllamaService {
   }
 
   @Override
-  public Multi<JsonObject> generateCompletion(
+  public Multi<JsonObject> generateChat(
       String connectionId, String model, List<Message> messageList) {
     LOG.infof(
-        "generateContent: \"%s\", \"%s\", messageSize=\"%d\"",
+        "generateChat: \"%s\", \"%s\", messageSize=\"%d\"",
         connectionId, model, messageList.size());
 
     return getOllamaClient(connectionId)

@@ -11,7 +11,7 @@ public interface OllamaService {
 
   Uni<String> ping(String connectionId);
 
-  Uni<List<OllamaModel>> listLocalModels(String connectionId);
+  Uni<List<OllamaModel>> listModels(String connectionId);
 
   Uni<List<OllamaModel>> listRunningModels(String connectionId);
 
@@ -25,6 +25,5 @@ public interface OllamaService {
 
   Multi<JsonObject> generateCompletion(String connectionId, String model, String prompt);
 
-  Multi<JsonObject> generateCompletion(
-      String connectionId, String model, List<Message> messageList);
+  Multi<JsonObject> generateChat(String connectionId, String model, List<Message> messageList);
 }

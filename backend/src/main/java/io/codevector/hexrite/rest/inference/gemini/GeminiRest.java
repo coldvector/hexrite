@@ -28,7 +28,7 @@ public class GeminiRest {
   @Path("/list")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Uni<Response> listLocalModels(JsonObject payload) {
+  public Uni<Response> listModels(JsonObject payload) {
     return geminiService
         .listModels(payload.getString("connectionId"))
         .onItem()
@@ -41,7 +41,7 @@ public class GeminiRest {
   @Produces(MediaType.SERVER_SENT_EVENTS)
   @RestStreamElementType(MediaType.TEXT_PLAIN)
   public Multi<JsonObject> generateCompletion(JsonObject payload) {
-    return geminiService.generateContent(
+    return geminiService.generateCompletion(
         payload.getString("connectionId"), payload.getString("model"), payload.getString("prompt"));
   }
 }

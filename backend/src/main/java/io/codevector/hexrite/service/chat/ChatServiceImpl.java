@@ -12,7 +12,8 @@ import io.codevector.hexrite.exceptions.ResourceNotFoundException;
 import io.codevector.hexrite.repository.chat.ChatRepository;
 import io.codevector.hexrite.repository.chat.MessageRepository;
 import io.codevector.hexrite.service.connection.ConnectionService;
-import io.codevector.hexrite.service.inference.gemini.GeminiService;
+import io.codevector.hexrite.service.inference.common.InferenceService;
+import io.codevector.hexrite.service.inference.common.InferenceServiceRegistry;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
@@ -35,7 +36,7 @@ public class ChatServiceImpl implements ChatService {
   private final MessageRepository messageRepository;
   private final ChatMapper chatMapper;
   private final ConnectionService connectionService;
-  private final GeminiService geminiService;
+  private final InferenceServiceRegistry inferenceRegistry;
 
   @Inject
   public ChatServiceImpl(
@@ -43,12 +44,12 @@ public class ChatServiceImpl implements ChatService {
       MessageRepository messageRepository,
       ChatMapper chatMapper,
       ConnectionService connectionService,
-      GeminiService geminiService) {
+      InferenceServiceRegistry inferenceRegistry) {
     this.chatRepository = chatRepository;
     this.messageRepository = messageRepository;
     this.chatMapper = chatMapper;
     this.connectionService = connectionService;
-    this.geminiService = geminiService;
+    this.inferenceRegistry = inferenceRegistry;
   }
 
   @WithSession
@@ -158,10 +159,17 @@ public class ChatServiceImpl implements ChatService {
   }
 
   private Multi<JsonObject> streamAndBufferInference(Chat chat) {
+    InferenceService service =
+        inferenceRegistry
+            .getInferenceService(chat.connection.type)
+            .orElseThrow(
+                () ->
+                    new IllegalArgumentException("Unsupported LLM type: " + chat.connection.type));
+
     AtomicReference<StringBuilder> buffer = new AtomicReference<>(new StringBuilder());
 
-    return geminiService
-        .generateContent(chat.connection.id, chat.model, chat.messages)
+    return service
+        .generateChat(chat.connection.id, chat.model, chat.messages)
         .onItem()
         .invoke(chunk -> bufferContent(chunk, buffer))
         .onCompletion()
