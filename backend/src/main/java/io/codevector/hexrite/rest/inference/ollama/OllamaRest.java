@@ -98,7 +98,7 @@ public class OllamaRest {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.SERVER_SENT_EVENTS)
   @RestStreamElementType(MediaType.TEXT_PLAIN)
-  public Multi<String> generateCompletion(JsonObject payload) {
+  public Multi<JsonObject> generateCompletion(JsonObject payload) {
     return ollamaService.generateCompletion(
         payload.getString("connectionId"), payload.getString("model"), payload.getString("prompt"));
   }

@@ -22,5 +22,5 @@ public interface OllamaService {
 
   Uni<Void> unloadModel(String connectionId, String model);
 
-  Multi<String> generateCompletion(String connectionId, String model, String prompt);
+  Multi<JsonObject> generateCompletion(String connectionId, String model, String prompt);
 }

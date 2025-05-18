@@ -2,6 +2,7 @@ package io.codevector.hexrite.service.inference.ollama;
 
 import io.codevector.hexrite.client.inference.ollama.OllamaClient;
 import io.codevector.hexrite.client.inference.ollama.OllamaClientFactory;
+import io.codevector.hexrite.dto.error.ErrorResponse;
 import io.codevector.hexrite.dto.inference.ollama.OllamaModel;
 import io.codevector.hexrite.service.connection.ConnectionService;
 import io.smallrye.mutiny.Multi;
@@ -92,14 +93,63 @@ public class OllamaServiceImpl implements OllamaService {
   }
 
   @Override
-  public Multi<String> generateCompletion(String connectionId, String model, String prompt) {
+  public Multi<JsonObject> generateCompletion(String connectionId, String model, String prompt) {
     LOG.infof("generateCompletion: \"%s\"", connectionId);
     return getOllamaClient(connectionId)
         .onItem()
         .transformToMulti(
             client ->
-                client.generateCompletion(
-                    payloadBuilder.createPayloadGenerateCompletion(model, prompt)));
+                parseNDJSON(
+                    client.generateCompletion(
+                        payloadBuilder.createPayloadGenerateCompletion(model, prompt))))
+        .onFailure()
+        .invoke(e -> LOG.errorf("generateCompletion: \"%s\"", e.getMessage()))
+        .onFailure()
+        .recoverWithMulti(
+            e -> Multi.createFrom().item(ErrorResponse.create(e.getMessage()).asJsonObject()));
+  }
+
+  private Multi<JsonObject> parseNDJSON(Multi<String> stream) {
+    return Multi.createFrom()
+        .emitter(
+            emitter -> {
+              StringBuilder buffer = new StringBuilder();
+              final int[] openBraces = {0}; // mutable holder for lambda
+
+              stream
+                  .subscribe()
+                  .with(
+                      chunk -> {
+                        buffer.append(chunk);
+
+                        for (int i = 0; i < chunk.length(); i++) {
+                          char c = chunk.charAt(i);
+                          if (c == '{') openBraces[0]++;
+                          else if (c == '}') openBraces[0]--;
+
+                          // When balanced and buffer not empty, try to parse and emit
+                          if (openBraces[0] == 0 && buffer.length() > 0) {
+                            String jsonString = buffer.toString().trim();
+                            try {
+                              JsonObject json = new JsonObject(jsonString);
+                              emitter.emit(json);
+                            } catch (Exception e) {
+                              LOG.warnf(
+                                  "Failed to parse JSON: %s — %s", jsonString, e.getMessage());
+                            }
+                            buffer.setLength(0); // Clear buffer
+                          }
+                        }
+                      },
+                      emitter::fail,
+                      () -> {
+                        if (buffer.length() > 0) {
+                          String remaining = buffer.toString().trim();
+                          LOG.warnf("Unparsed trailing data: %s", remaining);
+                        }
+                        emitter.complete();
+                      });
+            });
   }
 
   private Uni<OllamaClient> getOllamaClient(String connectionId) {
