@@ -4,6 +4,7 @@ import io.codevector.hexrite.client.inference.ollama.OllamaClient;
 import io.codevector.hexrite.client.inference.ollama.OllamaClientFactory;
 import io.codevector.hexrite.dto.error.ErrorResponse;
 import io.codevector.hexrite.dto.inference.ollama.OllamaModel;
+import io.codevector.hexrite.entity.chat.Message;
 import io.codevector.hexrite.service.connection.ConnectionService;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
@@ -94,7 +95,8 @@ public class OllamaServiceImpl implements OllamaService {
 
   @Override
   public Multi<JsonObject> generateCompletion(String connectionId, String model, String prompt) {
-    LOG.infof("generateCompletion: \"%s\"", connectionId);
+    LOG.infof("generateContent: \"%s\", \"%s\"", connectionId, model);
+
     return getOllamaClient(connectionId)
         .onItem()
         .transformToMulti(
@@ -102,6 +104,27 @@ public class OllamaServiceImpl implements OllamaService {
                 parseNDJSON(
                     client.generateCompletion(
                         payloadBuilder.createPayloadGenerateCompletion(model, prompt))))
+        .onFailure()
+        .invoke(e -> LOG.errorf("generateCompletion: \"%s\"", e.getMessage()))
+        .onFailure()
+        .recoverWithMulti(
+            e -> Multi.createFrom().item(ErrorResponse.create(e.getMessage()).asJsonObject()));
+  }
+
+  @Override
+  public Multi<JsonObject> generateCompletion(
+      String connectionId, String model, List<Message> messageList) {
+    LOG.infof(
+        "generateContent: \"%s\", \"%s\", messageSize=\"%d\"",
+        connectionId, model, messageList.size());
+
+    return getOllamaClient(connectionId)
+        .onItem()
+        .transformToMulti(
+            client ->
+                parseNDJSON(
+                    client.generateChatCompletion(
+                        payloadBuilder.createPayloadGenerateChatCompletion(model, messageList))))
         .onFailure()
         .invoke(e -> LOG.errorf("generateCompletion: \"%s\"", e.getMessage()))
         .onFailure()

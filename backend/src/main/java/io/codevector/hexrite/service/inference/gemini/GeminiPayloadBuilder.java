@@ -21,10 +21,10 @@ public class GeminiPayloadBuilder {
   }
 
   public JsonObject createPayloadChat(List<Message> messages) {
-    JsonArray payload = new JsonArray();
-    messages.forEach(m -> payload.add(messageToContent(m)));
+    JsonArray contents = new JsonArray();
+    messages.forEach(m -> contents.add(messageToContent(m)));
     return new JsonObject()
-        .put("contents", payload)
+        .put("contents", contents)
         .put("generationConfig", createTextGenerationConfig());
   }
 
@@ -34,7 +34,7 @@ public class GeminiPayloadBuilder {
 
   private JsonObject messageToContent(Message message) {
     return new JsonObject()
-        .put("role", message.role)
+        .put("role", message.role.toString().toLowerCase())
         .put("parts", new JsonArray().add(new JsonObject().put("text", message.content)));
   }
 }

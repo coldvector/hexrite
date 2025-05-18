@@ -187,7 +187,7 @@ public class ChatServiceImpl implements ChatService {
   }
 
   private Uni<Message> persistInference(Chat chat, String response) {
-    LOG.infof("persistAssistantMessage: chatId=\"%s\", response=\"%s\"", chat.id, response);
+    LOG.debugf("persistAssistantMessage: chatId=\"%s\", response=\"%s\"", chat.id, response);
 
     return Panache.withTransaction(
         () ->

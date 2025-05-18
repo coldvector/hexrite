@@ -59,4 +59,10 @@ public interface OllamaClient {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(ND_JSON)
   Multi<String> generateCompletion(JsonObject request);
+
+  @POST
+  @Path("/api/chat")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(ND_JSON)
+  Multi<String> generateChatCompletion(JsonObject request);
 }

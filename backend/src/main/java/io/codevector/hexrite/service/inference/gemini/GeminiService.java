@@ -13,5 +13,5 @@ public interface GeminiService {
 
   Multi<JsonObject> generateContent(String connectionId, String model, String prompt);
 
-  Multi<JsonObject> generateContent(String connectionId, String model, List<Message> prompt);
+  Multi<JsonObject> generateContent(String connectionId, String model, List<Message> messageList);
 }

@@ -1,6 +1,7 @@
 package io.codevector.hexrite.service.inference.ollama;
 
 import io.codevector.hexrite.dto.inference.ollama.OllamaModel;
+import io.codevector.hexrite.entity.chat.Message;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
@@ -23,4 +24,7 @@ public interface OllamaService {
   Uni<Void> unloadModel(String connectionId, String model);
 
   Multi<JsonObject> generateCompletion(String connectionId, String model, String prompt);
+
+  Multi<JsonObject> generateCompletion(
+      String connectionId, String model, List<Message> messageList);
 }
