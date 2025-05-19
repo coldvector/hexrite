@@ -51,10 +51,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         .findById(connectionId)
         .onItem()
         .ifNull()
-        .failWith(
-            () ->
-                new ResourceNotFoundException(
-                    String.format("Connection with id '%s' not found", connectionId)));
+        .failWith(() -> new ResourceNotFoundException("Connection not found"));
   }
 
   @WithTransaction
@@ -114,10 +111,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         .findById(connectionId)
         .onItem()
         .ifNull()
-        .failWith(
-            () ->
-                new ResourceNotFoundException(
-                    String.format("Connection with id '%s' not found", connectionId)))
+        .failWith(() -> new ResourceNotFoundException("Connection not found"))
         .chain(
             existingConnection ->
                 validateConnectionNameChange(connectionId, request, existingConnection));
@@ -133,9 +127,9 @@ public class ConnectionServiceImpl implements ConnectionService {
           .onItem()
           .ifNotNull()
           .failWith(
-            () ->
-              new ConflictException(
-                String.format("Connection '%s' already exists", request.name())))
+              () ->
+                  new ConflictException(
+                      String.format("Connection '%s' already exists", request.name())))
           .replaceWith(existingConnection);
     }
   }

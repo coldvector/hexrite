@@ -72,7 +72,10 @@ public class ChatServiceImpl implements ChatService {
   public Uni<Chat> getChatById(String chatId) {
     LOG.debugf("getChatById: chatId=\"%s\"", chatId);
 
-    return chatRepository.findByIdWithMessages(chatId);
+    return chatRepository
+        .findByIdWithMessages(chatId)
+        .onFailure()
+        .transform(t -> new ResourceNotFoundException("Chat not found"));
   }
 
   @WithTransaction

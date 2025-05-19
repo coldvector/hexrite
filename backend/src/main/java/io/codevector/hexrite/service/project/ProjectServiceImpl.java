@@ -43,7 +43,11 @@ public class ProjectServiceImpl implements ProjectService {
   public Uni<Project> getProjectById(String projectId) {
     LOG.debugf("getProjectById: projectId=\"%s\"", projectId);
 
-    return projectRepository.findById(projectId);
+    return projectRepository
+        .findById(projectId)
+        .onItem()
+        .ifNull()
+        .failWith(() -> new ResourceNotFoundException("Project not found"));
   }
 
   @WithTransaction
@@ -75,7 +79,7 @@ public class ProjectServiceImpl implements ProjectService {
         .findById(projectId)
         .onItem()
         .ifNull()
-        .failWith(() -> new ResourceNotFoundException("Chat not found"))
+        .failWith(() -> new ResourceNotFoundException("Project not found"))
         .onItem()
         .transform(existingProject -> existingProject.mutateProject(newTitle, newContext))
         .map(projectMapper::toProjectResponse);

@@ -2,7 +2,6 @@ package io.codevector.hexrite.repository.chat;
 
 import io.codevector.hexrite.dto.connection.ConnectionType;
 import io.codevector.hexrite.entity.chat.Chat;
-import io.codevector.hexrite.exceptions.ResourceNotFoundException;
 import io.quarkus.hibernate.reactive.panache.PanacheQuery;
 import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
 import io.quarkus.panache.common.Parameters;
@@ -14,9 +13,7 @@ public class ChatRepository implements PanacheRepositoryBase<Chat, String> {
 
   public Uni<Chat> findByIdWithMessages(String chatId) {
     return find("SELECT c FROM Chat c LEFT JOIN FETCH c.messages WHERE c.id = ?1", chatId)
-        .singleResult()
-        .onFailure()
-        .transform(t -> new ResourceNotFoundException("Chat not found"));
+        .singleResult();
   }
 
   public PanacheQuery<Chat> findByFilters(

@@ -36,7 +36,7 @@ public class ProjectRest {
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Uni<Response> getProjectById(String projectId) {
+  public Uni<Response> getProjectById(@PathParam("id") String projectId) {
     return this.projectService
         .getProjectById(projectId)
         .onItem()
