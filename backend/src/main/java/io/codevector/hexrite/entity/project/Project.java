@@ -52,4 +52,10 @@ public class Project extends AbstractTimestampedEntity {
     this.title = title;
     this.context = context;
   }
+
+  public Project mutateProject(String newTitle, String newContext) {
+    this.title = newTitle;
+    this.context = newContext;
+    return this;
+  }
 }
