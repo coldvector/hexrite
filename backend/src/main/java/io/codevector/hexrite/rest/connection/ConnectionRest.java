@@ -3,7 +3,6 @@ package io.codevector.hexrite.rest.connection;
 import io.codevector.hexrite.dto.connection.ConnectionRequest;
 import io.codevector.hexrite.rest.common.ResponseUtils;
 import io.codevector.hexrite.service.connection.ConnectionService;
-import io.codevector.hexrite.service.connection.ConnectionServiceImpl;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -23,7 +22,7 @@ public class ConnectionRest {
   private final ConnectionService connectionService;
 
   @Inject
-  public ConnectionRest(ConnectionServiceImpl connectionService) {
+  public ConnectionRest(ConnectionService connectionService) {
     this.connectionService = connectionService;
   }
 
@@ -33,7 +32,7 @@ public class ConnectionRest {
     return this.connectionService
         .listConnections()
         .onItem()
-        .transform(list -> ResponseUtils.handleSuccess(list));
+        .transform(ResponseUtils::handleSuccess);
   }
 
   @GET

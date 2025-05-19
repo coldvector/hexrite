@@ -2,7 +2,6 @@ package io.codevector.hexrite.rest.chat;
 
 import io.codevector.hexrite.rest.common.ResponseUtils;
 import io.codevector.hexrite.service.chat.ChatService;
-import io.codevector.hexrite.service.chat.ChatServiceImpl;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
@@ -28,7 +27,7 @@ public class ChatRest {
   private final UriInfo uriInfo;
 
   @Inject
-  public ChatRest(ChatServiceImpl chatService, UriInfo uriInfo) {
+  public ChatRest(ChatService chatService, UriInfo uriInfo) {
     this.chatService = chatService;
     this.uriInfo = uriInfo;
   }
@@ -39,7 +38,7 @@ public class ChatRest {
     return this.chatService
         .listChats(uriInfo.getQueryParameters())
         .onItem()
-        .transform(list -> ResponseUtils.handleSuccess(list));
+        .transform(ResponseUtils::handleSuccess);
   }
 
   @GET
