@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
 import io.codevector.hexrite.entity.common.AbstractTimestampedEntity;
 import io.codevector.hexrite.entity.connection.Connection;
+import io.codevector.hexrite.entity.project.Project;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,6 +51,14 @@ public class Chat extends AbstractTimestampedEntity {
   @Column(name = "model", nullable = true)
   @JsonProperty("model")
   public String model;
+
+  @ManyToOne(fetch = FetchType.EAGER, optional = true)
+  @JoinColumn(
+      name = "project_id",
+      referencedColumnName = "id",
+      nullable = true,
+      foreignKey = @ForeignKey(name = "chat_to_project_fk"))
+  public Project project;
 
   @RequiredForJPA
   public Chat() {}

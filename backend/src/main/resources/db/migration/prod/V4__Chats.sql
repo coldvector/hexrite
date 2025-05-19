@@ -3,10 +3,12 @@ CREATE TABLE hexrite.chats (
     "optlock" BIGINT NOT NULL,
     "title" VARCHAR(255) NOT NULL,
     "connection_id" VARCHAR(255),
+    "project_id" VARCHAR(255),
     "model" VARCHAR(255),
     "created_at" TIMESTAMP(6) WITH TIME ZONE NOT NULL,
     "updated_at" TIMESTAMP(6) WITH TIME ZONE NOT NULL,
     CONSTRAINT "chat_to_connection_fk" FOREIGN key ("connection_id") REFERENCES connections ("id"),
+    CONSTRAINT "chat_to_project_fk" FOREIGN key ("project_id") REFERENCES projects ("id"),
     PRIMARY KEY ("id")
 );
 
