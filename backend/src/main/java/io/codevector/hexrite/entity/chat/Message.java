@@ -41,6 +41,7 @@ public class Message extends PanacheEntityBase {
   public ChatRole role;
 
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+  @JsonProperty("content")
   public String content;
 
   @Column(name = "timestamp")

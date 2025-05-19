@@ -24,8 +24,8 @@ public class Setting extends PanacheEntityBase {
   public String key;
 
   @Version
-  @JsonIgnore
   @Column(name = "optlock", nullable = false)
+  @JsonIgnore
   protected long entityVersion;
 
   @Column(nullable = true)

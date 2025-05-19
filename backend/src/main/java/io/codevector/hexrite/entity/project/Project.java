@@ -34,9 +34,11 @@ public class Project extends AbstractTimestampedEntity {
       fetch = FetchType.LAZY,
       orphanRemoval = false,
       cascade = CascadeType.DETACH)
+  @JsonProperty("chats")
   public List<Chat> chats = new ArrayList<>();
 
   @Column(name = "context", columnDefinition = "TEXT", nullable = true)
+  @JsonProperty("context")
   public String context;
 
   @RequiredForJPA

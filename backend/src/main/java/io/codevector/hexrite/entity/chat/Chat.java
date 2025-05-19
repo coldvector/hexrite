@@ -38,6 +38,7 @@ public class Chat extends AbstractTimestampedEntity {
       fetch = FetchType.LAZY,
       orphanRemoval = true,
       cascade = CascadeType.ALL)
+  @JsonProperty("messages")
   public List<Message> messages = new ArrayList<>();
 
   @ManyToOne(fetch = FetchType.EAGER, optional = true)
@@ -46,6 +47,7 @@ public class Chat extends AbstractTimestampedEntity {
       referencedColumnName = "id",
       nullable = true,
       foreignKey = @ForeignKey(name = "chat_to_connection_fk"))
+  @JsonProperty("connection")
   public Connection connection;
 
   @Column(name = "model", nullable = true)
@@ -58,6 +60,7 @@ public class Chat extends AbstractTimestampedEntity {
       referencedColumnName = "id",
       nullable = true,
       foreignKey = @ForeignKey(name = "chat_to_project_fk"))
+  @JsonProperty("project")
   public Project project;
 
   @RequiredForJPA
