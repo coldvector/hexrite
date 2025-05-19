@@ -92,9 +92,15 @@ public class ChatServiceImpl implements ChatService {
   public Uni<ChatResponse> updateChatTitle(String chatId, String newTitle) {
     LOG.debugf("updateChatTitle: chatId=\"%s\", name=\"%s\"", chatId, newTitle);
 
+    if (newTitle == null || newTitle.isBlank()) {
+      return Uni.createFrom().failure(new IllegalArgumentException("Title cannot be empty"));
+    }
+
     return chatRepository
         .findById(chatId)
         .onItem()
+        .ifNull()
+        .failWith(() -> new ResourceNotFoundException("Chat not found"))
         .invoke(chat -> chat.title = newTitle)
         .map(chatMapper::toChatResponse);
   }
