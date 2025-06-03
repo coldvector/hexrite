@@ -103,11 +103,8 @@ public class ChatServiceImpl implements ChatService {
       return Uni.createFrom().failure(new IllegalArgumentException("Title cannot be empty"));
     }
 
-    return chatRepository
-        .findById(chatId)
+    return getChatById(chatId)
         .onItem()
-        .ifNull()
-        .failWith(() -> new ResourceNotFoundException("Chat not found"))
         .invoke(chat -> chat.title = newTitle)
         .map(chatMapper::toChatResponse);
   }
@@ -185,9 +182,6 @@ public class ChatServiceImpl implements ChatService {
     return Panache.withTransaction(
         () ->
             getChatById(chatId)
-                .onItem()
-                .ifNull()
-                .failWith(new ResourceNotFoundException("Chat not found"))
                 .call(
                     chat ->
                         messageRepository
