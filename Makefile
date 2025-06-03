@@ -26,6 +26,6 @@ help:
 	@echo "Available targets:"
 	@echo "  check-deps    - Check for required system dependencies"
 	@echo "  clean         - Clean backend and frontend builds"
-	@echo "  backend       - Build backend project"
-	@echo "  frontend      - Build frontend project"
+	@echo "  backend       - Build backend artifact"
+	@echo "  frontend      - Build frontend assets"
 	@echo "  help          - Show this help message"
