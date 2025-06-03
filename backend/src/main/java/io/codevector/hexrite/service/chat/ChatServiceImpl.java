@@ -14,6 +14,7 @@ import io.codevector.hexrite.repository.chat.MessageRepository;
 import io.codevector.hexrite.service.connection.ConnectionService;
 import io.codevector.hexrite.service.inference.common.InferenceService;
 import io.codevector.hexrite.service.inference.common.InferenceServiceRegistry;
+import io.codevector.hexrite.service.project.ProjectService;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
@@ -36,6 +37,7 @@ public class ChatServiceImpl implements ChatService {
   private final MessageRepository messageRepository;
   private final ChatMapper chatMapper;
   private final ConnectionService connectionService;
+  private final ProjectService projectService;
   private final InferenceServiceRegistry inferenceRegistry;
 
   @Inject
@@ -44,11 +46,13 @@ public class ChatServiceImpl implements ChatService {
       MessageRepository messageRepository,
       ChatMapper chatMapper,
       ConnectionService connectionService,
+      ProjectService projectService,
       InferenceServiceRegistry inferenceRegistry) {
     this.chatRepository = chatRepository;
     this.messageRepository = messageRepository;
     this.chatMapper = chatMapper;
     this.connectionService = connectionService;
+    this.projectService = projectService;
     this.inferenceRegistry = inferenceRegistry;
   }
 
@@ -105,6 +109,31 @@ public class ChatServiceImpl implements ChatService {
         .ifNull()
         .failWith(() -> new ResourceNotFoundException("Chat not found"))
         .invoke(chat -> chat.title = newTitle)
+        .map(chatMapper::toChatResponse);
+  }
+
+  @WithTransaction
+  @Override
+  public Uni<ChatResponse> addToProject(String chatId, String projectId) {
+    LOG.debugf("addToProject: chatId=\"%s\", projectId=\"%s\"", chatId, projectId);
+
+    return getChatById(chatId)
+        .call(
+            chat ->
+                projectService
+                    .getProjectById(projectId)
+                    .onItem()
+                    .invoke(project -> chat.project = project))
+        .map(chatMapper::toChatResponse);
+  }
+
+  @WithTransaction
+  @Override
+  public Uni<ChatResponse> removeFromProject(String chatId) {
+    LOG.debugf("removeFromProject: chatId=\"%s\"", chatId);
+
+    return getChatById(chatId)
+        .call(chat -> Uni.createFrom().item(chat).invoke(c -> c.project = null))
         .map(chatMapper::toChatResponse);
   }
 

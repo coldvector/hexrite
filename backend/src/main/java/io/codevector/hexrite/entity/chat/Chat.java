@@ -1,5 +1,6 @@
 package io.codevector.hexrite.entity.chat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.codevector.hexrite.annotations.RequiredForJPA;
 import io.codevector.hexrite.entity.common.AbstractTimestampedEntity;
@@ -60,7 +61,7 @@ public class Chat extends AbstractTimestampedEntity {
       referencedColumnName = "id",
       nullable = true,
       foreignKey = @ForeignKey(name = "chat_to_project_fk"))
-  @JsonProperty("project")
+  @JsonIgnore
   public Project project;
 
   @RequiredForJPA

@@ -1,5 +1,6 @@
 package io.codevector.hexrite.service.project;
 
+import io.codevector.hexrite.dto.project.ProjectChatResponse;
 import io.codevector.hexrite.dto.project.ProjectMapper;
 import io.codevector.hexrite.dto.project.ProjectResponse;
 import io.codevector.hexrite.entity.project.Project;
@@ -44,10 +45,17 @@ public class ProjectServiceImpl implements ProjectService {
     LOG.debugf("getProjectById: projectId=\"%s\"", projectId);
 
     return projectRepository
-        .findById(projectId)
-        .onItem()
-        .ifNull()
-        .failWith(() -> new ResourceNotFoundException("Project not found"));
+        .findByIdWithChats(projectId)
+        .onFailure()
+        .transform(t -> new ResourceNotFoundException("Project not found"));
+  }
+
+  @WithSession
+  @Override
+  public Uni<ProjectChatResponse> getProjectWithChatsById(String projectId) {
+    LOG.debugf("getProjectWithChatsById: projectId=\"%s\"", projectId);
+
+    return getProjectById(projectId).map(projectMapper::toProjectChatResponse);
   }
 
   @WithTransaction

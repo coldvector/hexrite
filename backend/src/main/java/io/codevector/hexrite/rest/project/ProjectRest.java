@@ -38,7 +38,7 @@ public class ProjectRest {
   @Produces(MediaType.APPLICATION_JSON)
   public Uni<Response> getProjectById(@PathParam("id") String projectId) {
     return this.projectService
-        .getProjectById(projectId)
+        .getProjectWithChatsById(projectId)
         .onItem()
         .transform(ResponseUtils::handleSuccess);
   }

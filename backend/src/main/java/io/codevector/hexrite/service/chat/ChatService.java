@@ -18,6 +18,10 @@ public interface ChatService {
 
   Uni<ChatResponse> updateChatTitle(String chatId, String name);
 
+  Uni<ChatResponse> addToProject(String chatId, String projectId);
+
+  Uni<ChatResponse> removeFromProject(String chatId);
+
   Multi<JsonObject> chat(String chatId, String message);
 
   Uni<Void> deleteChatById(String chatId);

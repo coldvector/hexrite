@@ -69,6 +69,28 @@ public class ChatRest {
         .transform(ResponseUtils::handleSuccess);
   }
 
+  @PATCH
+  @Path("/{id}/project/add")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Uni<Response> updateChatProject(@PathParam("id") String chatId, JsonObject payload) {
+    return this.chatService
+        .addToProject(chatId, payload.getString("projectId", ""))
+        .onItem()
+        .transform(ResponseUtils::handleSuccess);
+  }
+
+  @PATCH
+  @Path("/{id}/project/remove")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Uni<Response> removeChatFromProject(@PathParam("id") String chatId) {
+    return this.chatService
+        .removeFromProject(chatId)
+        .onItem()
+        .transform(ResponseUtils::handleSuccess);
+  }
+
   @PUT
   @Path("/{id}")
   @Consumes(MediaType.APPLICATION_JSON)

@@ -1,5 +1,6 @@
 package io.codevector.hexrite.service.project;
 
+import io.codevector.hexrite.dto.project.ProjectChatResponse;
 import io.codevector.hexrite.dto.project.ProjectResponse;
 import io.codevector.hexrite.entity.project.Project;
 import io.smallrye.mutiny.Uni;
@@ -10,6 +11,8 @@ public interface ProjectService {
   Uni<List<ProjectResponse>> listProjects();
 
   Uni<Project> getProjectById(String projectId);
+
+  Uni<ProjectChatResponse> getProjectWithChatsById(String projectId);
 
   Uni<ProjectResponse> createProject(String title, String context);
 
