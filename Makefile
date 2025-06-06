@@ -1,21 +1,16 @@
-POSTGRES_IMAGE := docker.io/library/postgres:17.0
 CONTAINER_ENGINE := $(shell if command -v podman &>/dev/null; then echo podman; else echo docker; fi)
+DEPENDENCIES := $(CONTAINER_ENGINE) javac node
+POSTGRES_IMAGE := docker.io/library/postgres:17.0
 
 .PHONY: check-deps clean dev-backend dev-frontend help
 
 check-deps:
-	@if ! command -v $(CONTAINER_ENGINE) &>/dev/null; then \
-		echo "Couldn't find $(CONTAINER_ENGINE)!"; \
-		exit 1; \
-	fi; \
-	if ! command -v javac &>/dev/null; then \
-		echo "Couldn't find JDK!"; \
-		exit 1; \
-	fi; \
-	if ! command -v node &>/dev/null; then \
-		echo "Couldn't find Node!"; \
-		exit 1; \
-	fi
+	@for cmd in $(DEPENDENCIES); do \
+		if ! command -v $$cmd &>/dev/null; then \
+			echo "Couldn't find $$cmd!"; \
+			exit 1; \
+		fi; \
+	done
 
 clean: check-deps
 	@cd ./backend; \
