@@ -29,10 +29,12 @@ SELECT
     c."id" AS "chat_id",
     c."title" AS "chat_title",
     c."model" AS "model",
+    p."title" AS "project_title",
     m."id" AS "message_id",
     m."role" AS "role",
     m."content" AS "content",
     m."timestamp" AS "timestamp"
 FROM
     hexrite.chats c
-    LEFT JOIN hexrite.messages m ON c."id" = m."chat_id";
+    LEFT JOIN hexrite.messages m ON c."id" = m."chat_id"
+    LEFT JOIN hexrite.projects p ON c."project_id" = p."id";
