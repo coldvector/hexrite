@@ -7,7 +7,7 @@ Chat with your LLMs.
 You can run the application in dev mode that enables live coding using below. Dev UI should be accessible at [http://localhost:3005/q/dev-ui/](http://localhost:3005/q/dev-ui/).
 
 ```shell
-./mvnw quarkus:dev
+make dev-backend
 ```
 
 ## Packaging and running JAR
@@ -21,7 +21,7 @@ You can run the application in dev mode that enables live coding using below. De
 2. Run the JAR
 
    ```shell
-   java -jar ./target/boilerplate-java-1.0.0.jar
+   java -jar ./target/hexrite-1.0.0.jar
    ```
 
 ## Packaging and running native executable
@@ -35,5 +35,5 @@ You can run the application in dev mode that enables live coding using below. De
 2. Run the executable
 
    ```shell
-   ./target/boilerplate-java-1.0.0
+   ./target/hexrite-1.0.0
    ```
