@@ -5,9 +5,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @RegisterForReflection
 public enum ChatRole {
   USER,
-  MODEL,
-  SYSTEM,
   ASSISTANT,
+  SYSTEM,
   TOOL,
   ;
 

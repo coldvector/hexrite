@@ -1,5 +1,6 @@
 package io.codevector.hexrite.service.inference.gemini;
 
+import io.codevector.hexrite.dto.chat.ChatRole;
 import io.codevector.hexrite.entity.chat.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -34,7 +35,9 @@ public class GeminiPayloadBuilder {
 
   private JsonObject messageToContent(Message message) {
     return new JsonObject()
-        .put("role", message.role.toString().toLowerCase())
+        .put(
+            "role",
+            message.role == ChatRole.ASSISTANT ? "model" : message.role.toString().toLowerCase())
         .put("parts", new JsonArray().add(new JsonObject().put("text", message.content)));
   }
 }

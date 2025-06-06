@@ -225,7 +225,7 @@ public class ChatServiceImpl implements ChatService {
     return Panache.withTransaction(
         () ->
             messageRepository
-                .persist(new Message(chat, ChatRole.MODEL, response))
+                .persist(new Message(chat, ChatRole.ASSISTANT, response))
                 .onItem()
                 .invoke(m -> chat.messages.add(m)));
   }
