@@ -32,9 +32,23 @@ SELECT
     p."title" AS "project_title",
     m."id" AS "message_id",
     m."role" AS "role",
-    m."content" AS "content",
+    CASE
+        WHEN LENGTH(m."content") > 20 THEN SUBSTRING(
+            m."content"
+            FROM
+                1 FOR 15
+        ) || '...' || SUBSTRING(
+            m."content"
+            FROM
+                GREATEST(LENGTH(m."content") - 4, 1) FOR 5
+        )
+        ELSE m."content"
+    END AS "content",
     m."timestamp" AS "timestamp"
 FROM
     hexrite.chats c
     LEFT JOIN hexrite.messages m ON c."id" = m."chat_id"
-    LEFT JOIN hexrite.projects p ON c."project_id" = p."id";
+    LEFT JOIN hexrite.projects p ON c."project_id" = p."id"
+ORDER BY
+    c."updated_at" DESC,
+    m."timestamp" ASC;

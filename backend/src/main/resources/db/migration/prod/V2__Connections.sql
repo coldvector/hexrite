@@ -30,4 +30,6 @@ SELECT
     "base_url",
     "enabled"
 FROM
-    hexrite.connections;
+    hexrite.connections
+ORDER BY
+    "updated_at" DESC;
