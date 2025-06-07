@@ -29,11 +29,18 @@ public class OllamaPayloadBuilder {
     return new JsonObject().put("model", model).put("prompt", prompt);
   }
 
-  public JsonObject createPayloadGenerateChatCompletion(String model, List<Message> messages) {
+  public JsonObject createPayloadGenerateChatCompletion(
+      String model, List<String> systemInstructions, List<Message> messages) {
     JsonArray contents = new JsonArray();
+
+    systemInstructions.forEach(s -> contents.add(stringToContent(s)));
     messages.forEach(m -> contents.add(messageToContent(m)));
 
     return new JsonObject().put("model", model).put("messages", contents);
+  }
+
+  private JsonObject stringToContent(String content) {
+    return new JsonObject().put("role", "system").put("content", content);
   }
 
   private JsonObject messageToContent(Message message) {

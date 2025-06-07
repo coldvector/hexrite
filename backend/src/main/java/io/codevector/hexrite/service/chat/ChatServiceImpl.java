@@ -24,6 +24,7 @@ import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MultivaluedMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import org.jboss.logging.Logger;
@@ -201,7 +202,7 @@ public class ChatServiceImpl implements ChatService {
     AtomicReference<StringBuilder> buffer = new AtomicReference<>(new StringBuilder());
 
     return service
-        .generateChat(chat.connection.id, chat.model, chat.messages)
+        .generateChat(chat.connection.id, chat.model, getProjectContext(chat), chat.messages)
         .onItem()
         .invoke(chunk -> bufferContent(chunk, buffer))
         .onCompletion()
@@ -228,6 +229,18 @@ public class ChatServiceImpl implements ChatService {
                 .persist(new Message(chat, ChatRole.ASSISTANT, response))
                 .onItem()
                 .invoke(m -> chat.messages.add(m)));
+  }
+
+  private List<String> getProjectContext(Chat chat) {
+    LOG.infof("insertProjectContext: chatId=\"%s\", project=\"%s\"", chat.id, chat.project);
+
+    List<String> systemInstructions = new ArrayList<>();
+
+    if (chat.project != null) {
+      systemInstructions.add(chat.project.context);
+    }
+
+    return systemInstructions;
   }
 
   private Uni<Connection> getConnectionById(String connectionId) {

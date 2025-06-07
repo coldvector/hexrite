@@ -13,5 +13,9 @@ public interface GeminiService {
 
   Multi<JsonObject> generateCompletion(String connectionId, String model, String prompt);
 
-  Multi<JsonObject> generateChat(String connectionId, String model, List<Message> messageList);
+  Multi<JsonObject> generateChat(
+      String connectionId,
+      String model,
+      List<String> systemInstructions,
+      List<Message> messageList);
 }

@@ -21,12 +21,27 @@ public class GeminiPayloadBuilder {
                         .put("parts", new JsonArray().add(new JsonObject().put("text", prompt)))));
   }
 
-  public JsonObject createPayloadChat(List<Message> messages) {
+  public JsonObject createPayloadChat(List<String> systemInstructions, List<Message> messages) {
     JsonArray contents = new JsonArray();
     messages.forEach(m -> contents.add(messageToContent(m)));
-    return new JsonObject()
-        .put("contents", contents)
-        .put("generationConfig", createTextGenerationConfig());
+
+    JsonObject payload =
+        new JsonObject()
+            .put("contents", contents)
+            .put("generationConfig", createTextGenerationConfig());
+
+    if (systemInstructions != null && !systemInstructions.isEmpty()) {
+      String systemInstructionsText = String.join(" ", systemInstructions);
+
+      payload.put(
+          "system_instruction",
+          new JsonObject()
+              .put(
+                  "parts",
+                  new JsonArray().add(new JsonObject().put("text", systemInstructionsText))));
+    }
+
+    return payload;
   }
 
   public JsonObject createTextGenerationConfig() {

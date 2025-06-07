@@ -74,7 +74,10 @@ public class GeminiServiceImpl implements GeminiService, InferenceService {
 
   @Override
   public Multi<JsonObject> generateChat(
-      String connectionId, String model, List<Message> messageList) {
+      String connectionId,
+      String model,
+      List<String> systemInstructions,
+      List<Message> messageList) {
     LOG.infof(
         "generateContent: \"%s\", model=\"%s\", messageSize=\"%d\"",
         connectionId, model, messageList.size());
@@ -84,7 +87,8 @@ public class GeminiServiceImpl implements GeminiService, InferenceService {
         .transformToMulti(
             client ->
                 client
-                    .generateContent(model, payloadBuilder.createPayloadChat(messageList))
+                    .generateContent(
+                        model, payloadBuilder.createPayloadChat(systemInstructions, messageList))
                     .onItem()
                     .transform(chunk -> responseAdapter.parseStreamingResponseChunk(chunk)))
         .onFailure()

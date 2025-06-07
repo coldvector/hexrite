@@ -123,7 +123,10 @@ public class OllamaServiceImpl implements OllamaService, InferenceService {
 
   @Override
   public Multi<JsonObject> generateChat(
-      String connectionId, String model, List<Message> messageList) {
+      String connectionId,
+      String model,
+      List<String> systemInstructions,
+      List<Message> messageList) {
     LOG.infof(
         "generateChat: \"%s\", \"%s\", messageSize=\"%d\"",
         connectionId, model, messageList.size());
@@ -134,7 +137,8 @@ public class OllamaServiceImpl implements OllamaService, InferenceService {
             client ->
                 parseNDJSON(
                         client.generateChatCompletion(
-                            payloadBuilder.createPayloadGenerateChatCompletion(model, messageList)))
+                            payloadBuilder.createPayloadGenerateChatCompletion(
+                                model, systemInstructions, messageList)))
                     .onItem()
                     .transform(
                         chunk -> responseAdapter.parseStreamingChatGenerationResponseChunk(chunk)))
